@@ -1,4 +1,6 @@
 module Mongoid::Search
+  extend ActiveSupport::Concern
+  
   included do
     cattr_accessor :search_fields, :match
   end
