@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "mongoid_search"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = "Search implementation for Mongoid ORM"
+    gem.description = "Simple full text search implementation."
     gem.email = "mauricio@papodenerd.net"
     gem.homepage = "http://github.com/mauriciozaffari/mongoid_search"
     gem.authors = ["Mauricio Zaffari"]
