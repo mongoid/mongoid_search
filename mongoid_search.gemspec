@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "lib/mongoid_search.rb",
+     "mongoid_search.gemspec",
      "spec/mongoid_search_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
