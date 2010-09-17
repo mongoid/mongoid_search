@@ -14,17 +14,16 @@ Gem::Specification.new do |s|
   s.email = %q{mauricio@papodenerd.net}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README.md"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
-     "README.rdoc",
+     "README.md",
      "Rakefile",
      "VERSION",
      "lib/mongoid_search.rb",
-     "lib/mongoid_search/README.md",
      "lib/mongoid_search/keywords_extractor.rb",
      "lib/mongoid_search/mongoid_search.rb",
      "mongoid_search.gemspec",
@@ -47,11 +46,14 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<mongoid>, ["~> 2.0.0.beta"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
     else
+      s.add_dependency(%q<mongoid>, ["~> 2.0.0.beta"])
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
     end
   else
+    s.add_dependency(%q<mongoid>, ["~> 2.0.0.beta"])
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
   end
 end
