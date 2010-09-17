@@ -58,7 +58,10 @@ Note that the search is case insensitive, and accept partial searching too:
 Options
 -------
 
-:match - :any for match any occurrence, :all to match all ocurrences. Default is :any
+:match:
+  :any - match any occurrence
+  :all - match all ocurrences 
+  Default is :any.
 
     search_in :brand, :name, { :tags => :name }, { :match => :all }
     
