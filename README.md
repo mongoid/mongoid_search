@@ -63,7 +63,7 @@ Options
   :all - match all ocurrences 
   Default is :any.
 
-    search_in :brand, :name, { :tags => :name }, { :match => :all }
+    search_in :brand, :name, { :tags => :name }, { :match => :any }
     
     Product.search("apple motorola").size
     => 1
