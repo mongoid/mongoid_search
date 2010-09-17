@@ -1,4 +1,4 @@
-Mongoid Searh
+Mongoid Search
 ============
 
 Mongoid Search is a simple full text search implementation for Mongoid ORM.
