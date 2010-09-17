@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongoid_search}
-  s.version = "0.0.1"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mauricio Zaffari"]
@@ -24,6 +24,9 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "lib/mongoid_search.rb",
+     "lib/mongoid_search/README.md",
+     "lib/mongoid_search/keywords_extractor.rb",
+     "lib/mongoid_search/mongoid_search.rb",
      "mongoid_search.gemspec",
      "spec/mongoid_search_spec.rb",
      "spec/spec.opts",
