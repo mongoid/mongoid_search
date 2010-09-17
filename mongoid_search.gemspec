@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongoid_search}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mauricio Zaffari"]
@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     "Gemfile",
+     "Gemfile.lock",
      "LICENSE",
      "README.md",
      "Rakefile",
@@ -27,6 +29,9 @@ Gem::Specification.new do |s|
      "lib/mongoid_search/keywords_extractor.rb",
      "lib/mongoid_search/mongoid_search.rb",
      "mongoid_search.gemspec",
+     "spec/keywords_extractor_spec.rb",
+     "spec/models/product.rb",
+     "spec/models/tag.rb",
      "spec/mongoid_search_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -38,6 +43,8 @@ Gem::Specification.new do |s|
   s.summary = %q{Search implementation for Mongoid ORM}
   s.test_files = [
     "spec/keywords_extractor_spec.rb",
+     "spec/models/product.rb",
+     "spec/models/tag.rb",
      "spec/mongoid_search_spec.rb",
      "spec/spec_helper.rb"
   ]
