@@ -9,7 +9,7 @@ module Mongoid::Search
     # Set a field or a number of fields as sources for search
     def search_in(*args)
       options = args.last.is_a?(Hash) && (args.last.keys.first == :match) ? args.pop : {}
-      self.match = options[:match] || :any
+      self.match = [:any, :all].include?(options[:match]) ? options[:match] : :any
       self.search_fields = args
 
       field :_keywords, :type => Array
