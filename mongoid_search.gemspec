@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mauricio Zaffari"]
-  s.date = %q{2010-09-16}
+  s.date = %q{2010-09-17}
   s.description = %q{Simple full text search implementation.}
   s.email = %q{mauricio@papodenerd.net}
   s.extra_rdoc_files = [
@@ -37,7 +37,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Search implementation for Mongoid ORM}
   s.test_files = [
-    "spec/mongoid_search_spec.rb",
+    "spec/keywords_extractor_spec.rb",
+     "spec/mongoid_search_spec.rb",
      "spec/spec_helper.rb"
   ]
 
