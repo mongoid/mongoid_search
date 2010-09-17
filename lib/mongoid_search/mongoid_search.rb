@@ -19,7 +19,7 @@ module Mongoid::Search
     end
     
     def search(query)
-      self.send("#{self.match.to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/i })
+      self.send("#{self.match.to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
     end
   end
   
