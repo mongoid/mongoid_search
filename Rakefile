@@ -8,7 +8,7 @@ begin
     gem.summary = "Search implementation for Mongoid ORM"
     gem.description = "Simple full text search implementation."
     gem.email = "mauricio@papodenerd.net"
-    gem.homepage = "http://github.com/mauriciozaffari/mongoid_search"
+    gem.homepage = "http://www.papodenerd.net/mongoid-search-full-text-search-for-your-mongoid-models/"
     gem.authors = ["Mauricio Zaffari"]
     gem.add_dependency("mongoid", ["~> 2.0.0.beta"])
     gem.add_development_dependency "rspec", ">= 1.2.9"
