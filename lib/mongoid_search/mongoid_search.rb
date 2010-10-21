@@ -32,6 +32,6 @@ module Mongoid::Search
       else
         KeywordsExtractor.extract(self.send(field))
       end
-    end.flatten.compact.uniq
+    end.flatten.compact.uniq.sort
   end
 end
