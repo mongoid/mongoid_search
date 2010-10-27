@@ -18,8 +18,8 @@ module Mongoid::Search
       before_save :set_keywords
     end
     
-    def search(query)
-      self.send("#{self.match.to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
+    def search(query, options={})
+      self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
     end
   end
   

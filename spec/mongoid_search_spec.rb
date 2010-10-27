@@ -9,7 +9,7 @@ describe Mongoid::Search do
   end
   
   it "should set the _keywords field" do
-    @product._keywords.should == ["apple", "iphone", "amazing", "awesome", "ole"]
+    @product._keywords.should == ["amazing", "apple", "awesome", "iphone", "ole"]
   end
     
   it "should return results in search" do
@@ -36,5 +36,14 @@ describe Mongoid::Search do
   it "should not return results when all words do not match, if using :match => :all" do
     Product.match = :all
     Product.search("apple motorola").size.should == 0
+  end
+    
+  it "should return results for any matching word, using :match => :all, passing :match => :any to .search" do
+    Product.match = :all
+    Product.search("apple motorola", :match => :any).size.should == 1
+  end
+  
+  it "should not return results when all words do not match, passing :match => :all to .search" do
+    Product.search("apple motorola", :match => :all).size.should == 0
   end
 end

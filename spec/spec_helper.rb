@@ -11,7 +11,7 @@ end
 
 Dir["#{File.dirname(__FILE__)}/models/*.rb"].each { |file| require file }
 
-DatabaseCleaner.orm = "mongoid"
+DatabaseCleaner.orm = :mongoid
 
 Spec::Runner.configure do |config|
   config.before(:all) do
