@@ -24,8 +24,9 @@ Examples
       field :name
 
       references_many :tags
+      refereced_in    :category
       
-      search_in :brand, :name, :tags => :name
+      search_in :brand, :name, :tags => :name, :category => :name
     end
 
     class Tag
@@ -33,6 +34,13 @@ Examples
       field :name
 
       referenced_in :product
+    end
+    
+    class Category
+      include Mongoid::Document
+      field :name
+
+      references_many :products
     end
 
 Now when you save a product, you get a _keywords field automatically:
@@ -58,10 +66,10 @@ Note that the search is case insensitive, and accept partial searching too:
 Options
 -------
 
-:match:
+match:
   :any - match any occurrence
   :all - match all ocurrences 
-  Default is :any.
+  Default is _:any_.
 
     search_in :brand, :name, { :tags => :name }, { :match => :any }
     
@@ -72,3 +80,13 @@ Options
     
     Product.search("apple motorola").size
     => 0
+    
+allow_empty_search:
+  true - match any occurrence
+  false - match all ocurrences 
+  Default is _false_.
+
+    search_in :brand, :name, { :tags => :name }, { :allow_empty_search => true }
+    
+    Product.search("").size
+    => 1
