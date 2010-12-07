@@ -67,12 +67,9 @@ Options
 -------
 
 match:
-
-  :any - match any occurrence
-  
-  :all - match all ocurrences 
-  
-  Default is _:any_.
+_:any_ - match any occurrence
+_:all_ - match all ocurrences 
+Default is _:any_.
 
     search_in :brand, :name, { :tags => :name }, { :match => :any }
     
@@ -85,12 +82,9 @@ match:
     => 0
     
 allow_empty_search:
-
-  true - match any occurrence
-  
-  false - match all ocurrences 
-  
-  Default is _false_.
+_true_ - match any occurrence
+_false_ - match all ocurrences 
+Default is _false_.
 
     search_in :brand, :name, { :tags => :name }, { :allow_empty_search => true }
     
