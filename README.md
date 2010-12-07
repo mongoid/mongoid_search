@@ -66,10 +66,10 @@ Note that the search is case insensitive, and accept partial searching too:
 Options
 -------
 
-match:
-_:any_ - match any occurrence
-_:all_ - match all ocurrences 
-Default is _:any_.
+match:  
+  _:any_ - match any occurrence  
+  _:all_ - match all ocurrences  
+  Default is _:any_.
 
     search_in :brand, :name, { :tags => :name }, { :match => :any }
     
@@ -81,10 +81,10 @@ Default is _:any_.
     Product.search("apple motorola").size
     => 0
     
-allow_empty_search:
-_true_ - match any occurrence
-_false_ - match all ocurrences 
-Default is _false_.
+allow_empty_search:  
+  _true_ - match any occurrence  
+  _false_ - match all ocurrences  
+  Default is _false_.
 
     search_in :brand, :name, { :tags => :name }, { :allow_empty_search => true }
     
