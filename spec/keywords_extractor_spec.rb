@@ -2,8 +2,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe KeywordsExtractor do
-  it "should return if no text is passed" do
-    KeywordsExtractor.extract("").should == nil
+  it "should return an empty array if no text is passed" do
+    KeywordsExtractor.extract("").should == []
   end
     
   it "should return an array of keywords" do
@@ -22,7 +22,7 @@ describe KeywordsExtractor do
     KeywordsExtractor.extract("CaFé").should == ["cafe"]
   end
     
-  it "should split whitespaces, hifens, dots and underlines" do
-    KeywordsExtractor.extract("CaFé-express.com delicious").should == ["cafe", "express", "com", "delicious"]
+  it "should split whitespaces, hifens, dots, underlines, etc.." do
+    KeywordsExtractor.extract("CaFé-express.com delicious;come visit, and 'win' an \"iPad\"").should == ["cafe", "express", "com", "delicious", "come", "visit", "and", "win", "an", "ipad"]
   end
 end

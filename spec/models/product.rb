@@ -5,6 +5,7 @@ class Product
   field :name
 
   references_many :tags
+  referenced_in   :category
 
-  search_in :brand, :name, :tags => :name
+  search_in :brand, :name, :tags => :name, :category => :name
 end
