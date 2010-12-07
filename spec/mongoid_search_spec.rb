@@ -50,4 +50,9 @@ describe Mongoid::Search do
   it "should return no results when a blank search is made" do
     Product.search("").size.should == 0
   end
+    
+  it "should return results when a blank search is made when :allow_empty_search is true" do
+    Product.allow_empty_search = true
+    Product.search("").size.should == 1
+  end
 end
