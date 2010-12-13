@@ -7,5 +7,5 @@ class Product
   references_many :tags
   referenced_in   :category
 
-  search_in :brand, :name, :tags => :name, :category => :name
+  search_in :brand, :name, :outlet, :tags => :name, :category => :name
 end

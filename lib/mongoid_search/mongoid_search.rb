@@ -39,7 +39,8 @@ module Mongoid::Search
           end
         end
       else
-        KeywordsExtractor.extract(self.send(field))
+        text = self[field]
+        KeywordsExtractor.extract(text) unless text.nil?
       end
     end.flatten.compact.uniq.sort
   end
