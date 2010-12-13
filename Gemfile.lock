@@ -25,6 +25,7 @@ GEM
       mongo (= 1.0.9)
       tzinfo (~> 0.3.22)
       will_paginate (~> 3.0.pre)
+    rake (0.8.7)
     rspec (2.0.1)
       rspec-core (~> 2.0.1)
       rspec-expectations (~> 2.0.1)
@@ -47,4 +48,5 @@ DEPENDENCIES
   database_cleaner
   jeweler
   mongoid (= 2.0.0.beta.19)
+  rake (= 0.8.7)
   rspec (= 2.0.1)
