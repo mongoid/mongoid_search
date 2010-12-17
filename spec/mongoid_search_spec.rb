@@ -5,11 +5,15 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Mongoid::Search do
   
   before(:each) do
-    @product = Product.create :brand => "Apple", :name => "iPhone", :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) }, :category => Category.new(:name => "Mobile")
+    @product = Product.create :brand => "Apple",
+                              :name => "iPhone",
+                              :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+                              :category => Category.new(:name => "Mobile"),
+                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")]
   end
   
   it "should set the _keywords field" do
-    @product._keywords.should == ["amazing", "apple", "awesome", "iphone", "mobile", "ole"]
+    @product._keywords.should == ["amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole"]
   end
     
   it "should return results in search" do
@@ -54,5 +58,9 @@ describe Mongoid::Search do
   it "should return results when a blank search is made when :allow_empty_search is true" do
     Product.allow_empty_search = true
     Product.search("").size.should == 1
+  end
+      
+  it "should search for embedded documents" do
+    Product.search("craddle").size.should == 1
   end
 end

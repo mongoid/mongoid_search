@@ -27,15 +27,21 @@ module Mongoid::Search
   
   private
   
+  # TODO: This need some refatoring..
   def set_keywords
     self._keywords = self.search_fields.map do |field|
       if field.is_a?(Hash)
         field.keys.map do |key|
           attribute = self.send(key)
+          method = field[key]
           if attribute.is_a?(Array)
-            attribute.map(&field[key]).map { |t| KeywordsExtractor.extract t }
+            if method.is_a?(Array)
+              method.map {|m| attribute.map { |a| KeywordsExtractor.extract a.send(m) } }
+            else
+              attribute.map(&method).map { |t| KeywordsExtractor.extract t }
+            end
           else
-            KeywordsExtractor.extract(attribute.send(field[key]))
+            KeywordsExtractor.extract(attribute.send(method))
           end
         end
       else
