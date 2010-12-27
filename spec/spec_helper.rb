@@ -13,7 +13,7 @@ Dir["#{File.dirname(__FILE__)}/models/*.rb"].each { |file| require file }
 
 DatabaseCleaner.orm = :mongoid
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   config.before(:all) do
     DatabaseCleaner.strategy = :truncation
   end
