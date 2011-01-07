@@ -23,6 +23,41 @@ module Mongoid::Search
       return self.all if query.blank? && allow_empty_search
       self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
     end
+    
+    def search_relevant(query, options={})
+      return self.all if query.blank? && allow_empty_search
+      #self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
+      
+      keywords = KeywordsExtractor.extract(query)
+      map = <<-EOS
+        function() {
+          var entries = 0;
+          for(i in keywords)
+            for(j in this._keywords) {
+              if(this._keywords[j] == keywords[i])
+                entries++;
+            }
+          if(entries > 0)
+            emit(this._id, entries)
+        }
+      EOS
+      reduce = <<-EOS
+        function(key, values) {
+          return(values[0])
+        }
+      EOS
+      
+      query = if scope_stack.count > 0
+        scope_stack.inject{|a, b| a + b}.selector
+      end
+
+      limit = options.delete(:limit)
+      options.merge! :scope => {:keywords => keywords}, :query => query
+                     
+      cursor = collection.map_reduce(map, reduce, options).find.sort(['value', -1])
+      cursor = cursor.limit(limit) if limit
+      cursor
+    end
   end
   
   private
