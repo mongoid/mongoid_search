@@ -61,7 +61,7 @@ module Mongoid::Search
   end
   
   private
-  
+
   # TODO: This need some refatoring..
   def set_keywords
     self._keywords = self.search_fields.map do |field|
@@ -82,6 +82,6 @@ module Mongoid::Search
       else
         KeywordsExtractor.extract(self.send(field))
       end
-    end.flatten.compact.uniq.sort
+    end.flatten.compact.sort
   end
 end
