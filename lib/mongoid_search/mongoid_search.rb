@@ -26,16 +26,16 @@ module Mongoid::Search
     
     def search_relevant(query, options={})
       return self.all if query.blank? && allow_empty_search
-      #self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => KeywordsExtractor.extract(query).map { |q| /#{q}/ })
       
       keywords = KeywordsExtractor.extract(query)
+      
       map = <<-EOS
         function() {
-          var entries = 0;
+          var entries = 0
           for(i in keywords)
             for(j in this._keywords) {
               if(this._keywords[j] == keywords[i])
-                entries++;
+                entries++
             }
           if(entries > 0)
             emit(this._id, entries)
