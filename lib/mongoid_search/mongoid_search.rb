@@ -51,12 +51,13 @@ module Mongoid::Search
         scope_stack.inject{|a, b| a + b}.selector
       end
 
-      limit = options.delete(:limit)
+      options.delete(:limit)
+      options.delete(:skip)
       options.merge! :scope => {:keywords => keywords}, :query => query
-                     
-      cursor = collection.map_reduce(map, reduce, options).find.sort(['value', -1])
-      cursor = cursor.limit(limit) if limit
-      cursor
+               
+      res = collection.map_reduce(map, reduce, options)
+
+      res.find.sort(['value', -1]) # Cursor
     end
   end
   
