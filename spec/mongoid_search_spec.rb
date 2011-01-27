@@ -12,8 +12,22 @@ describe Mongoid::Search do
                               :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")]
   end
   
+  context "utf-8 characters" do
+    before(:each) {
+      @product = Product.create :brand => "Эльбрус",
+                                :name => "Процессор",
+                                :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+                                :category => Category.new(:name => "процессоры"),
+                                :subproducts => []
+    }
+    
+    it "should leave utf8 characters" do
+      @product._keywords.should == ["amazing", "awesome", "ole", "Процессор", "Эльбрус", "процессоры"]
+    end
+  end
+  
   it "should set the _keywords field" do
-    @product._keywords.should == ["amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole"]
+    @product._keywords.should == ["amazing", "apple", "apple", "awesome", "craddle", "iphone", "mobile", "ole"]
   end
     
   it "should return results in search" do
