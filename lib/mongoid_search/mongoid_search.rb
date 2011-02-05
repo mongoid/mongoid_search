@@ -53,7 +53,7 @@ module Mongoid::Search
 
       options.delete(:limit)
       options.delete(:skip)
-      options.merge! :scope => {:keywords => keywords}, :query => query
+      options.merge! :scope => {:keywords => keywords}, :query => query.only(:_id, :_keywords)
                
       res = collection.map_reduce(map, reduce, options)
 
