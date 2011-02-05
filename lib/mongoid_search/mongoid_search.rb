@@ -46,14 +46,20 @@ module Mongoid::Search
           return(values[0])
         }
       EOS
+  
+      #raise [self.class, self.inspect].inspect
       
-      query = if scope_stack.count > 0
-        scope_stack.inject{|a, b| a + b}.selector
+      kw_conditions = keywords.map do |kw|
+        {:_keywords => kw}
       end
+      
+      criteria = self.any_of(*kw_conditions)
+      
+      query = criteria.selector
 
       options.delete(:limit)
       options.delete(:skip)
-      options.merge! :scope => {:keywords => keywords}, :query => query.only(:_id, :_keywords)
+      options.merge! :scope => {:keywords => keywords}, :query => query
                
       res = collection.map_reduce(map, reduce, options)
 
