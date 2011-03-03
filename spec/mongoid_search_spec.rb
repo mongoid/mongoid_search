@@ -33,6 +33,12 @@ describe Mongoid::Search do
   it "should return results in search" do
     Product.search("apple").size.should == 1
   end
+
+  it "should return results in search for dynamic attribute" do
+    @product[:outlet] = "online shop"
+    @product.save!
+    Product.search("online").size.should == 1
+  end
       
   it "should return results in search even searching a accented word" do
     Product.search("Ole").size.should == 1

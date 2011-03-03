@@ -1,14 +1,14 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (3.0.3)
-      activesupport (= 3.0.3)
+    activemodel (3.0.5)
+      activesupport (= 3.0.5)
       builder (~> 2.1.2)
       i18n (~> 0.4)
-    activesupport (3.0.3)
-    bson (1.1.5)
+    activesupport (3.0.5)
+    bson (1.2.4)
     builder (2.1.2)
-    database_cleaner (0.6.0)
+    database_cleaner (0.6.4)
     diff-lcs (1.1.2)
     git (1.2.5)
     i18n (0.5.0)
@@ -16,11 +16,11 @@ GEM
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
-    mongo (1.1.5)
-      bson (>= 1.1.5)
-    mongoid (2.0.0.beta.20)
+    mongo (1.2.4)
+      bson (>= 1.2.4)
+    mongoid (2.0.0.rc.7)
       activemodel (~> 3.0)
-      mongo (~> 1.1)
+      mongo (~> 1.2)
       tzinfo (~> 0.3.22)
       will_paginate (~> 3.0.pre)
     rake (0.8.7)
@@ -32,7 +32,7 @@ GEM
     rspec-expectations (2.3.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.3.0)
-    tzinfo (0.3.23)
+    tzinfo (0.3.24)
     will_paginate (3.0.pre2)
 
 PLATFORMS
@@ -42,4 +42,5 @@ DEPENDENCIES
   database_cleaner
   jeweler
   mongoid (~> 2.0.0.beta.19)
-  rspec
+  rake (= 0.8.7)
+  rspec (= 2.3.0)
