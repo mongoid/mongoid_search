@@ -94,6 +94,7 @@ allow_empty_search:
 TODO
 ----
 
-* Word stemming enabled via a configuration (because it's useful only in english)
 * Strip html with sanitize (https://github.com/rgrove/sanitize)
-* Relevance ranking with a configuration file or param instead of a new method
+* Test relevant search
+* Move all configurations to a configuration file. Maybe /config/mongoid_search.yml.
+
