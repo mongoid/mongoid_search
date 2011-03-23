@@ -10,6 +10,7 @@ GEM
     builder (2.1.2)
     database_cleaner (0.6.4)
     diff-lcs (1.1.2)
+    fast-stemmer (1.0.0)
     git (1.2.5)
     i18n (0.5.0)
     jeweler (1.5.2)
@@ -40,6 +41,7 @@ PLATFORMS
 
 DEPENDENCIES
   database_cleaner
+  fast-stemmer (= 1.0.0)
   jeweler
   mongoid (~> 2.0.0.beta.19)
   rake (= 0.8.7)

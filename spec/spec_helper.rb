@@ -2,6 +2,8 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'mongoid'
 require 'database_cleaner'
+require 'fast_stemmer'
+require 'yaml'
 require 'mongoid_search'
 
 Mongoid.configure do |config|

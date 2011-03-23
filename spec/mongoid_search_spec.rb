@@ -5,6 +5,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Mongoid::Search do
   
   before(:each) do
+    Product.stem_keywords = false
+    Product.ignore_list   = nil
     @product = Product.create :brand => "Apple",
                               :name => "iPhone",
                               :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
@@ -14,6 +16,8 @@ describe Mongoid::Search do
   
   context "utf-8 characters" do
     before(:each) {
+      Product.stem_keywords = false
+      Product.ignore_list   = nil
       @product = Product.create :brand => "Эльбрус",
                                 :name => "Процессор",
                                 :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
@@ -28,6 +32,18 @@ describe Mongoid::Search do
   
   it "should set the _keywords field" do
     @product._keywords.should == ["amazing", "apple", "apple", "awesome", "craddle", "iphone", "mobile", "ole"]
+  end
+  
+  it "should set the _keywords field with stemmed words if stem is enabled" do
+    Product.stem_keywords = true
+    @product.save!
+    @product._keywords.should == ["amaz", "appl", "appl", "awesom", "craddl", "iphon", "mobil", "ol"]
+  end
+  
+  it "should ignore keywords in an ignore list" do
+    Product.ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
+    @product.save!
+    @product._keywords.should == ["apple", "apple", "craddle", "iphone", "mobile", "ole"]
   end
     
   it "should return results in search" do
