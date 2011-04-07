@@ -1,3 +1,5 @@
+require 'fast_stemmer'
+
 module Util
       
   def self.keywords(text, stem_keywords, ignore_list)
