@@ -86,15 +86,21 @@ module Mongoid::Search
       if field.is_a?(Hash)
         field.keys.map do |key|
           attribute = self.send(key)
-          method = field[key]
-          if attribute.is_a?(Array)
-            if method.is_a?(Array)
-              method.map {|m| attribute.map { |a| Util.keywords a.send(m), stem_keywords, ignore_list } }
+          if attribute
+            method = field[key]
+            if attribute.is_a?(Array)
+              if method.is_a?(Array)
+                method.map {|m| attribute.map { |a| Util.keywords a.send(m), stem_keywords, ignore_list } }
+              else
+                attribute.map(&method).map { |t| Util.keywords t, stem_keywords, ignore_list }
+              end
             else
-              attribute.map(&method).map { |t| Util.keywords t, stem_keywords, ignore_list }
+              if method.is_a?(Array)
+                method.map {|m| Util.keywords attribute.send(m), stem_keywords, ignore_list }
+              else
+                Util.keywords(attribute.send(method), stem_keywords, ignore_list)
+              end
             end
-          else
-            Util.keywords(attribute.send(method), stem_keywords, ignore_list)
           end
         end
       else
