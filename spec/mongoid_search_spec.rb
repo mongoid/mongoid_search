@@ -101,11 +101,8 @@ describe Mongoid::Search do
   end
   
   it 'should work in a chainable fashion' do
-    c = Category.create(:name => 'test')
-    @product.category = c
-    @product.save
-    c.products.where(:brand => 'Apple').csearch('apple').size.should == 1
-    c.products.csearch('craddle').where(:brand => 'Apple').size.should == 1
+    @product.category.products.where(:brand => 'Apple').csearch('apple').size.should == 1
+    @product.category.products.csearch('craddle').where(:brand => 'Apple').size.should == 1
   end
   
 end
