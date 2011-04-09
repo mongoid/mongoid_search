@@ -1,3 +1,14 @@
+This fork is compatible with 2.0.1 and adds the possibility to chain the search
+function into other criteria.
+
+Assuming you have a category with multiple products you can now use the following
+code to search for 'iphone' in products cheaper than $499
+
+    @category.products.where(:price.lt => 499).asc(:price).csearch('iphone')
+    
+In this case we have to use csearch, an alias for search, because since v2.0.0
+Mongoid defines it's own Criteria.search method.
+
 Mongoid Search
 ============
 
