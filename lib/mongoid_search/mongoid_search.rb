@@ -29,14 +29,18 @@ module Mongoid::Search
         search_without_relevance(query, options)
       end
     end
+    
+    # Mongoid 2.0.0 introduces Criteria.seach so we need to provide
+    # alternate method
+    alias csearch search
 
     def search_without_relevance(query, options={})
-      return self.all if query.blank? && allow_empty_search
-      self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      return criteria.all if query.blank? && allow_empty_search
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
 
     def search_relevant(query, options={})
-      return self.all if query.blank? && allow_empty_search
+      return criteria.all if query.blank? && allow_empty_search
 
       keywords = Util.keywords(query, stem_keywords, ignore_list)
 
@@ -64,7 +68,7 @@ module Mongoid::Search
         {:_keywords => kw}
       end
 
-      criteria = self.any_of(*kw_conditions)
+      criteria = criteria.any_of(*kw_conditions)
 
       query = criteria.selector
 
