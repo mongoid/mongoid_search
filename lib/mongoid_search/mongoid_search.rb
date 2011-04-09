@@ -68,7 +68,7 @@ module Mongoid::Search
         {:_keywords => kw}
       end
 
-      criteria = criteria.any_of(*kw_conditions)
+      criteria = (criteria || self).any_of(*kw_conditions)
 
       query = criteria.selector
 
@@ -76,9 +76,9 @@ module Mongoid::Search
       options.delete(:skip)
       options.merge! :scope => {:keywords => keywords}, :query => query
 
-      res = collection.map_reduce(map, reduce, options)
-
-      res.find.sort(['value', -1]) # Cursor
+      # res = collection.map_reduce(map, reduce, options)
+      # res.find.sort(['value', -1]) # Cursor
+      collection.map_reduce(map, reduce, options)
     end
   end
 
