@@ -14,7 +14,7 @@ module Mongoid::Search
       self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:allow_empty_search] : false
       self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:allow_empty_search] : false
       self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
-      self.search_fields      = args
+      self.search_fields      = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
       index :_keywords
@@ -84,7 +84,7 @@ module Mongoid::Search
 
   private
 
-  # TODO: This need some refatoring..
+  # TODO: This need some refactoring..
   def set_keywords
     self._keywords = self.search_fields.map do |field|
       if field.is_a?(Hash)
@@ -102,9 +102,13 @@ module Mongoid::Search
           end
         end
       else
-        text = self[field]
-        Util.keywords(text, stem_keywords, ignore_list) unless text.nil?
+        value = self[field]
+        if value.is_a?(Array)
+          value.each {|v| Util.keywords(v, stem_keywords, ignore_list) if v}
+        else
+          Util.keywords(value, stem_keywords, ignore_list) if value
+        end
       end
-    end.flatten.compact.sort
+    end.flatten.map(&:to_s).select{|f| not f.empty? }.uniq.sort
   end
 end
