@@ -70,11 +70,11 @@ module Mongoid::Search
 
       options.delete(:limit)
       options.delete(:skip)
-      options.merge! :scope => {:keywords => keywords}, :query => query
+      options.merge! :scope => {:keywords => keywords}, :query => query, :out => {:inline => 1}, :raw => true
                
       res = collection.map_reduce(map, reduce, options)
 
-      res.find.sort(['value', -1]) # Cursor
+      res.sort { |a,b| b['value'] <=> a['value'] }
     end
   end
   
