@@ -7,8 +7,7 @@ module Util
       normalize(:kd).
       to_s.
       gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
-      #to_s.gsub(/[^\x00-\x7F]/,''). # strip accents
-      gsub(/[^[:alnum:]\s]/,'').       
+      gsub(/[^[:alnum:]\s]/,'').   # strip accents     
       downcase.
       split(' ').
       reject { |word| word.size < 2 }
