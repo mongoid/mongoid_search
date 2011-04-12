@@ -1,13 +1,14 @@
 module Util
 
   def self.keywords(text, stem_keywords, ignore_list)
-    return [] if text.blank?
+      return [] if text.blank?
     text = text.
       mb_chars.
       normalize(:kd).
       to_s.
       gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
-      gsub(/[^[:alpha:]\s]/,'').  # strip accents
+      #to_s.gsub(/[^\x00-\x7F]/,''). # strip accents
+      gsub(/[^[:alnum:]\s]/,'').       
       downcase.
       split(' ').
       reject { |word| word.size < 2 }

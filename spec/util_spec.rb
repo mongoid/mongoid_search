@@ -37,4 +37,8 @@ describe Util do
   it "should ignore keywords with less than two words" do
     Util.keywords("A runner running", false, "").should_not include "a"
   end
+
+   it "should not ignore numbers" do
+      Util.keywords("Ford T 1908", false, "").should include "1908"
+   end
 end
