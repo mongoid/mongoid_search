@@ -31,19 +31,32 @@ describe Mongoid::Search do
   end
 
   it "should set the _keywords field" do
-    @product._keywords.should == ["amazing", "apple", "apple", "awesome", "craddle", "iphone", "mobile", "ole"]
+    @product.attrs = ['lightweight', 'rugged', :red]
+    @product.save!
+    @product._keywords.should include "amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole", "lightweight", "rugged", "red"
+  end
+  
+  it "should inherit _keywords field and build upon" do
+    variant = Variant.create :brand => "Apple",
+                              :name => "iPhone",
+                              :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+                              :category => Category.new(:name => "Mobile"),
+                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
+                              :color => :white
+    variant._keywords.should include "amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole", "white"
+    Variant.search(:name => 'Apple', :color => :white).size.should == 1
   end
 
   it "should set the _keywords field with stemmed words if stem is enabled" do
     Product.stem_keywords = true
     @product.save!
-    @product._keywords.should == ["amaz", "appl", "appl", "awesom", "craddl", "iphon", "mobil", "ol"]
+    @product._keywords.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "ol"]
   end
 
   it "should ignore keywords in an ignore list" do
     Product.ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
     @product.save!
-    @product._keywords.should == ["apple", "apple", "craddle", "iphone", "mobile", "ole"]
+    @product._keywords.should == ["apple", "craddle", "iphone", "mobile", "ole"]
   end
 
    it "should incorporate numbers as keywords" do
@@ -110,4 +123,10 @@ describe Mongoid::Search do
   it "should search for embedded documents" do
     Product.search("craddle").size.should == 1
   end
+  
+  it 'should work in a chainable fashion' do
+    @product.category.products.where(:brand => 'Apple').csearch('apple').size.should == 1
+    @product.category.products.csearch('craddle').where(:brand => 'Apple').size.should == 1
+  end
+  
 end

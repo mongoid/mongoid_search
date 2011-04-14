@@ -14,7 +14,7 @@ module Mongoid::Search
       self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:allow_empty_search] : false
       self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:allow_empty_search] : false
       self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
-      self.search_fields      = args
+      self.search_fields      = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
       index :_keywords
@@ -29,14 +29,18 @@ module Mongoid::Search
         search_without_relevance(query, options)
       end
     end
+    
+    # Mongoid 2.0.0 introduces Criteria.seach so we need to provide
+    # alternate method
+    alias csearch search
 
     def search_without_relevance(query, options={})
-      return self.all if query.blank? && allow_empty_search
-      self.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      return criteria.all if query.blank? && allow_empty_search
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
 
     def search_relevant(query, options={})
-      return self.all if query.blank? && allow_empty_search
+      return criteria.all if query.blank? && allow_empty_search
 
       keywords = Util.keywords(query, stem_keywords, ignore_list)
 
@@ -64,7 +68,7 @@ module Mongoid::Search
         {:_keywords => kw}
       end
 
-      criteria = self.any_of(*kw_conditions)
+      criteria = (criteria || self).any_of(*kw_conditions)
 
       query = criteria.selector
 
@@ -72,15 +76,15 @@ module Mongoid::Search
       options.delete(:skip)
       options.merge! :scope => {:keywords => keywords}, :query => query
 
-      res = collection.map_reduce(map, reduce, options)
-
-      res.find.sort(['value', -1]) # Cursor
+      # res = collection.map_reduce(map, reduce, options)
+      # res.find.sort(['value', -1]) # Cursor
+      collection.map_reduce(map, reduce, options)
     end
   end
 
   private
 
-  # TODO: This need some refatoring..
+  # TODO: This need some refactoring..
   def set_keywords
     self._keywords = self.search_fields.map do |field|
       if field.is_a?(Hash)
@@ -98,9 +102,13 @@ module Mongoid::Search
           end
         end
       else
-        text = self[field]
-        Util.keywords(text, stem_keywords, ignore_list) unless text.nil?
+        value = self[field]
+        if value.is_a?(Array)
+          value.each {|v| Util.keywords(v, stem_keywords, ignore_list) if v}
+        else
+          Util.keywords(value, stem_keywords, ignore_list) if value
+        end
       end
-    end.flatten.compact.sort
+    end.flatten.map(&:to_s).select{|f| not f.empty? }.uniq.sort
   end
 end

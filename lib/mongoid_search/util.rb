@@ -1,8 +1,8 @@
 module Util
 
   def self.keywords(text, stem_keywords, ignore_list)
-      return [] if text.blank?
-    text = text.
+    return [] if text.blank?
+    text = text.to_s.
       mb_chars.
       normalize(:kd).
       to_s.
