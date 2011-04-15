@@ -66,7 +66,7 @@ Note that the search is case insensitive, and accept partial searching too:
 Assuming you have a category with multiple products you can now use the following
 code to search for 'iphone' in products cheaper than $499
 
-    @category.products.where(:price.lt => 499).asc(:price).csearch('iphone')
+    @category.products.where(:price.lt => 499).csearch('iphone').asc(:price)
 
 In this case we have to use csearch, an alias for search, because since v2.0.0
 Mongoid defines it's own Criteria.search method.
