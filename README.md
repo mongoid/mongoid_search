@@ -1,14 +1,3 @@
-This fork is compatible with 2.0.1 and adds the possibility to chain the search
-function into other criteria.
-
-Assuming you have a category with multiple products you can now use the following
-code to search for 'iphone' in products cheaper than $499
-
-    @category.products.where(:price.lt => 499).asc(:price).csearch('iphone')
-    
-In this case we have to use csearch, an alias for search, because since v2.0.0
-Mongoid defines it's own Criteria.search method.
-
 Mongoid Search
 ============
 
@@ -73,6 +62,15 @@ Note that the search is case insensitive, and accept partial searching too:
 
     Product.search("ipho").size
     => 1
+    
+Assuming you have a category with multiple products you can now use the following
+code to search for 'iphone' in products cheaper than $499
+
+    @category.products.where(:price.lt => 499).asc(:price).csearch('iphone')
+
+In this case we have to use csearch, an alias for search, because since v2.0.0
+Mongoid defines it's own Criteria.search method.
+
 
 Options
 -------
@@ -101,11 +99,23 @@ allow_empty_search:
 
     Product.search("").size
     => 1
+    
+ignore_list:
+  Pass in an ignore list location. Keywords in that list will be ignored.
+  
+    search_in :brand, :name, { :tags => :name }, { :ignore_list => Rails.root.join("config", "ignorelist.yml") }
+
+  The list should look like:
+    
+    ignorelist:
+      a, an, to, from, as
+      
+  You can include how many keywords you like.
 
 TODO
 ----
 
 * Strip html with sanitize (https://github.com/rgrove/sanitize)
-* Test relevant search
+* Rewrite and test relevant search
 * Move all configurations to a configuration file. Maybe /config/mongoid_search.yml.
 

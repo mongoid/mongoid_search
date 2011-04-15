@@ -38,7 +38,9 @@ module Mongoid::Search
       return criteria.all if query.blank? && allow_empty_search
       criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
-
+    
+    # I know what this method should do, but I don't really know what it does.
+    # It was a pull from another fork, with no tests on it. Proably should be rewrited (and tested).
     def search_relevant(query, options={})
       return criteria.all if query.blank? && allow_empty_search
 

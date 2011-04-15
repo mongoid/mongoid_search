@@ -59,6 +59,17 @@ describe Mongoid::Search do
     @product._keywords.should == ["apple", "craddle", "iphone", "mobile", "ole"]
   end
 
+   it "should incorporate numbers as keywords" do
+        @product = Product.create :brand => "Ford",
+                              :name => "T 1908",
+                              :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
+                              :category => Category.new(:name => "Vehicle")
+
+      @product.save!
+      @product._keywords.should == ["1908","amazing", "car", "first", "ford",  "vehicle"]
+   end
+
+
   it "should return results in search" do
     Product.search("apple").size.should == 1
   end
