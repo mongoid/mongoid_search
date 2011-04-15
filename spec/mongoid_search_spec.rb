@@ -30,10 +30,10 @@ describe Mongoid::Search do
     end
   end
 
-  it "should set the _keywords field" do
-    @product.attrs = ['lightweight', 'rugged', :red]
+  it "should set the _keywords field for array fields also" do
+    @product.attrs = ['lightweight', 'plastic', :red]
     @product.save!
-    @product._keywords.should include "amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole", "lightweight", "rugged", "red"
+    @product._keywords.should include 'lightweight', 'plastic', 'red'
   end
   
   it "should inherit _keywords field and build upon" do
@@ -43,8 +43,8 @@ describe Mongoid::Search do
                               :category => Category.new(:name => "Mobile"),
                               :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
                               :color => :white
-    variant._keywords.should include "amazing", "apple", "awesome", "craddle", "iphone", "mobile", "ole", "white"
-    Variant.search(:name => 'Apple', :color => :white).size.should == 1
+    variant._keywords.should include 'white'
+    Variant.search(:name => 'Apple', :color => :white).should eq [variant]
   end
 
   it "should set the _keywords field with stemmed words if stem is enabled" do
