@@ -106,6 +106,6 @@ module Mongoid::Search
         value = value.join(' ') if value.respond_to?(:join)
         Util.keywords(value, stem_keywords, ignore_list) if value
       end
-    end.flatten.map(&:to_s).select{|f| not f.empty? }.uniq.sort
+    end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
