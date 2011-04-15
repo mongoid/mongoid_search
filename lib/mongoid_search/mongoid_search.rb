@@ -103,11 +103,8 @@ module Mongoid::Search
         end
       else
         value = self[field]
-        if value.is_a?(Array)
-          value.each {|v| Util.keywords(v, stem_keywords, ignore_list) if v}
-        else
-          Util.keywords(value, stem_keywords, ignore_list) if value
-        end
+        value = value.join(' ') if value.respond_to?(:join)
+        Util.keywords(value, stem_keywords, ignore_list) if value
       end
     end.flatten.map(&:to_s).select{|f| not f.empty? }.uniq.sort
   end
