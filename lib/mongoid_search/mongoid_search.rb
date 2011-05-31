@@ -17,7 +17,7 @@ module Mongoid::Search
       self.search_fields      = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
-      index :_keywords
+      index :_keywords, background: true
 
       before_save :set_keywords
     end
@@ -105,12 +105,9 @@ module Mongoid::Search
         end
       else
         value = self[field]
-        if value.is_a?(Array)
-          value.each {|v| Util.keywords(v, stem_keywords, ignore_list) if v}
-        else
-          Util.keywords(value, stem_keywords, ignore_list) if value
-        end
+        value = value.join(' ') if value.respond_to?(:join)
+        Util.keywords(value, stem_keywords, ignore_list) if value
       end
-    end.flatten.map(&:to_s).select{|f| not f.empty? }.uniq.sort
+    end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
