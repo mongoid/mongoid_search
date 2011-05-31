@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mongoid_search (0.2.3)
+    mongoid_search (0.2.4)
       bson_ext (~> 1.2)
       fast-stemmer (~> 1.0.0)
       mongoid (~> 2.0.0)
