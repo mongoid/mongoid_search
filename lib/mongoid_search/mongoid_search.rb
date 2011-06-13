@@ -5,6 +5,15 @@ module Mongoid::Search
     cattr_accessor :search_fields, :match, :allow_empty_search, :relevant_search, :stem_keywords, :ignore_list
   end
 
+  def self.included(base)
+    @classes ||= []
+    @classes << base
+  end
+
+  def self.classes
+    @classes
+  end
+
   module ClassMethods #:nodoc:
     # Set a field or a number of fields as sources for search
     def search_in(*args)
@@ -29,7 +38,7 @@ module Mongoid::Search
         search_without_relevance(query, options)
       end
     end
-    
+
     # Mongoid 2.0.0 introduces Criteria.seach so we need to provide
     # alternate method
     alias csearch search
@@ -38,9 +47,7 @@ module Mongoid::Search
       return criteria.all if query.blank? && allow_empty_search
       criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
-    
-    # I know what this method should do, but I don't really know what it does.
-    # It was a pull from another fork, with no tests on it. Proably should be rewrited (and tested).
+
     def search_relevant(query, options={})
       return criteria.all if query.blank? && allow_empty_search
 
@@ -82,6 +89,19 @@ module Mongoid::Search
       # res.find.sort(['value', -1]) # Cursor
       collection.map_reduce(map, reduce, options)
     end
+
+    # Goes through all documents in the class that includes Mongoid::Search
+    # and indexes the keywords.
+    def index_keywords!
+      all.each { |d| d.index_keywords! ? Log.green(".") : Log.red("F") }
+    end
+  end
+
+  module InstanceMethods #:nodoc:
+    # Indexes the document keywords
+    def index_keywords!
+      update_attribute(:_keywords, set_keywords)
+    end
   end
 
   private
@@ -92,15 +112,17 @@ module Mongoid::Search
       if field.is_a?(Hash)
         field.keys.map do |key|
           attribute = self.send(key)
-          method = field[key]
-          if attribute.is_a?(Array)
-            if method.is_a?(Array)
-              method.map {|m| attribute.map { |a| Util.keywords a.send(m), stem_keywords, ignore_list } }
+          unless attribute.blank?
+            method = field[key]
+            if attribute.is_a?(Array)
+              if method.is_a?(Array)
+                method.map {|m| attribute.map { |a| Util.keywords a.send(m), stem_keywords, ignore_list } }
+              else
+                attribute.map(&method).map { |t| Util.keywords t, stem_keywords, ignore_list }
+              end
             else
-              attribute.map(&method).map { |t| Util.keywords t, stem_keywords, ignore_list }
+              Util.keywords(attribute.send(method), stem_keywords, ignore_list)
             end
-          else
-            Util.keywords(attribute.send(method), stem_keywords, ignore_list)
           end
         end
       else

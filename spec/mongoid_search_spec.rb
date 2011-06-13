@@ -35,7 +35,7 @@ describe Mongoid::Search do
     @product.save!
     @product._keywords.should include 'lightweight', 'plastic', 'red'
   end
-  
+
   it "should inherit _keywords field and build upon" do
     variant = Variant.create :brand => "Apple",
                               :name => "iPhone",
@@ -123,10 +123,21 @@ describe Mongoid::Search do
   it "should search for embedded documents" do
     Product.search("craddle").size.should == 1
   end
-  
+
   it 'should work in a chainable fashion' do
     @product.category.products.where(:brand => 'Apple').csearch('apple').size.should == 1
     @product.category.products.csearch('craddle').where(:brand => 'Apple').size.should == 1
   end
-  
+
+  it 'should return the classes that include the search module' do
+    Mongoid::Search.classes.should == [Product]
+  end
+
+  it 'should have a method to index keywords' do
+    @product.index_keywords!.should == true
+  end
+
+  it 'should have a class method to index all documents keywords' do
+    Product.index_keywords!.should_not include(false)
+  end
 end
