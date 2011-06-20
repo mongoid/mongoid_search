@@ -45,13 +45,13 @@ module Mongoid::Search
 
     def search_without_relevance(query, options={})
       return criteria.all if query.blank? && allow_empty_search
-      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
 
     def search_relevant(query, options={})
       return criteria.all if query.blank? && allow_empty_search
 
-      keywords = Util.keywords(query, stem_keywords, ignore_list)
+      keywords = Util.normalize_keywords(query, stem_keywords, ignore_list)
 
       map = <<-EOS
         function() {
@@ -105,31 +105,9 @@ module Mongoid::Search
   end
 
   private
-
-  # TODO: This need some refactoring..
   def set_keywords
     self._keywords = self.search_fields.map do |field|
-      if field.is_a?(Hash)
-        field.keys.map do |key|
-          attribute = self.send(key)
-          unless attribute.blank?
-            method = field[key]
-            if attribute.is_a?(Array)
-              if method.is_a?(Array)
-                method.map {|m| attribute.map { |a| Util.keywords a.send(m), stem_keywords, ignore_list } }
-              else
-                attribute.map(&method).map { |t| Util.keywords t, stem_keywords, ignore_list }
-              end
-            else
-              Util.keywords(attribute.send(method), stem_keywords, ignore_list)
-            end
-          end
-        end
-      else
-        value = self[field]
-        value = value.join(' ') if value.respond_to?(:join)
-        Util.keywords(value, stem_keywords, ignore_list) if value
-      end
+      Util.keywords(self, field, stem_keywords, ignore_list)
     end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
