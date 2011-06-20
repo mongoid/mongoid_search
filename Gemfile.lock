@@ -36,6 +36,9 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
+    simplecov (0.4.2)
+      simplecov-html (~> 0.4.4)
+    simplecov-html (0.4.5)
     tzinfo (0.3.27)
 
 PLATFORMS
@@ -46,3 +49,4 @@ DEPENDENCIES
   mongoid_search!
   rake (~> 0.8.7)
   rspec (~> 2.4)
+  simplecov (>= 0.4.0)
