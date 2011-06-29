@@ -30,6 +30,18 @@ describe Mongoid::Search do
     end
   end
 
+  context "when references are nil" do
+    context "when instance is being created" do
+      it "should not complain about method missing" do
+        lambda { Product.create! }.should_not raise_error
+      end
+    end
+    
+    subject { Product.create :brand => "Apple", :name => "iPhone" }
+
+    its(:_keywords) { should == ["apple", "iphone"] }
+  end
+
   it "should set the _keywords field for array fields also" do
     @product.attrs = ['lightweight', 'plastic', :red]
     @product.save!
@@ -140,4 +152,6 @@ describe Mongoid::Search do
   it 'should have a class method to index all documents keywords' do
     Product.index_keywords!.should_not include(false)
   end
+
+  
 end
