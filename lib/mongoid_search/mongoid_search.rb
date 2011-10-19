@@ -45,7 +45,7 @@ module Mongoid::Search
 
     def search_without_relevance(query, options={})
       return criteria.all if query.blank? && allow_empty_search
-      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /^#{q}.*/ })
     end
 
     def search_relevant(query, options={})

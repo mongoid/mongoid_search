@@ -97,6 +97,10 @@ describe Mongoid::Search do
     Product.search("Olé").size.should == 1
   end
 
+  it "adds good regexes to the criteria" do
+    Product.search("iph").criteria.selector[:_keywords]['$in'].first.should == /^iph.*/
+  end
+
   it "should return results in search even if the case doesn't match" do
     Product.search("oLe").size.should == 1
   end
