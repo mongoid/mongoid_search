@@ -22,6 +22,10 @@ describe Util do
     Util.normalize_keywords("CaFé", false, "").should == ["cafe"]
   end
 
+  it "should downcase utf-8 chars of the text passed" do
+    Util.normalize_keywords("Кафе", false, "").should == ["кафе"]
+  end
+
   it "should split whitespaces, hifens, dots, underlines, etc.." do
     Util.normalize_keywords("CaFé-express.com delicious;come visit, and 'win' an \"iPad\"", false, "").should == ["cafe", "express", "com", "delicious", "come", "visit", "and", "win", "an", "ipad"]
   end
