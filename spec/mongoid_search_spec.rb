@@ -26,7 +26,11 @@ describe Mongoid::Search do
     }
 
     it "should leave utf8 characters" do
-      @product._keywords.should == ["amazing", "awesome", "ole", "Процессор", "Эльбрус", "процессоры"]
+      @product._keywords.should == ["amazing", "awesome", "ole", "процессор", "процессоры", "эльбрус"]
+    end
+
+    it "should return results in search when case doesn't match" do
+      Product.search("ЭЛЬБРУС").size.should == 1
     end
   end
 
