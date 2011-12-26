@@ -1,7 +1,9 @@
 # encoding: utf-8
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Util do
+describe Mongoid::Search::Util do
+  Util = Mongoid::Search::Util
+
   it "should return an empty array if no text is passed" do
     Util.normalize_keywords("", false, "").should == []
   end
