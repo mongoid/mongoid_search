@@ -1,4 +1,4 @@
-module Mongoid::Search
+module MongoidSearch
   module Util
 
     def self.keywords(klass, field, stem_keywords, ignore_list)

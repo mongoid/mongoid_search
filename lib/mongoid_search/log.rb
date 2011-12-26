@@ -1,4 +1,4 @@
-module Mongoid::Search
+module MongoidSearch
   class Log
     cattr_accessor :silent
 
