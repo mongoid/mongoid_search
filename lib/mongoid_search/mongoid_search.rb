@@ -45,13 +45,13 @@ module Mongoid::Search
 
     def search_without_relevance(query, options={})
       return criteria.all if query.blank? && allow_empty_search
-      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => MongoidSearch::Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
     end
 
     def search_relevant(query, options={})
       return criteria.all if query.blank? && allow_empty_search
 
-      keywords = Util.normalize_keywords(query, stem_keywords, ignore_list)
+      keywords = MongoidSearch::Util.normalize_keywords(query, stem_keywords, ignore_list)
 
       map = <<-EOS
         function() {
@@ -93,21 +93,19 @@ module Mongoid::Search
     # Goes through all documents in the class that includes Mongoid::Search
     # and indexes the keywords.
     def index_keywords!
-      all.each { |d| d.index_keywords! ? Log.green(".") : Log.red("F") }
+      all.each { |d| d.index_keywords! ? MongoidSearch::Log.green(".") : MongoidSearch::Log.red("F") }
     end
   end
 
-  module InstanceMethods #:nodoc:
-    # Indexes the document keywords
-    def index_keywords!
-      update_attribute(:_keywords, set_keywords)
-    end
+  # Indexes the document keywords
+  def index_keywords!
+    update_attribute(:_keywords, set_keywords)
   end
 
   private
   def set_keywords
     self._keywords = self.search_fields.map do |field|
-      Util.keywords(self, field, stem_keywords, ignore_list)
+      MongoidSearch::Util.keywords(self, field, stem_keywords, ignore_list)
     end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
