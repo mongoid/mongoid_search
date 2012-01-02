@@ -3,7 +3,6 @@ PATH
   specs:
     mongoid_search (0.2.7)
       bson_ext (>= 1.2)
-      fast-stemmer (~> 1.0.0)
       mongoid (>= 2.0.0)
 
 GEM
@@ -49,6 +48,7 @@ PLATFORMS
 
 DEPENDENCIES
   database_cleaner (~> 0.6.4)
+  fast-stemmer (~> 1.0.0)
   mongoid_search!
   rake (~> 0.8.7)
   rspec (~> 2.4)
