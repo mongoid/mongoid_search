@@ -36,6 +36,10 @@ describe MongoidSearch::Util do
     Util.normalize_keywords("A runner running and eating", MongoidSearch::FastStemmer.new, "").should == ["runner", "run", "and", "eat"]
   end
 
+  it "should stem keywords with ruby-stemmer" do
+    Util.normalize_keywords("A runner running and eating", MongoidSearch::LinguaStemmer.new, "").should == ["runner", "run", "and", "eat"]
+  end
+
   it "should stem russian keywords" do
     Util.normalize_keywords('Города в России бывают очень красивыми', MongoidSearch::LinguaStemmer.new(:language => 'ru'), "").should == %w( город росс быва очен красив )
   end
