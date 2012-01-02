@@ -1,8 +1,10 @@
+require "mongoid_search/stemmers"
+
 module Mongoid::Search
   extend ActiveSupport::Concern
 
   included do
-    cattr_accessor :search_fields, :match, :allow_empty_search, :relevant_search, :stem_keywords, :ignore_list
+    cattr_accessor :search_fields, :match, :allow_empty_search, :relevant_search, :stem_keywords, :stemmer_class, :ignore_list
   end
 
   def self.included(base)
@@ -22,6 +24,7 @@ module Mongoid::Search
       self.allow_empty_search = [true, false].include?(options[:allow_empty_search]) ? options[:allow_empty_search] : false
       self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:allow_empty_search] : false
       self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:allow_empty_search] : false
+      self.stemmer_class      = options.fetch(:stemmer_class, MongoidSearch::FastStemmer)
       self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
       self.search_fields      = (self.search_fields || []).concat args
 
@@ -45,13 +48,17 @@ module Mongoid::Search
 
     def search_without_relevance(query, options={})
       return criteria.all if query.blank? && allow_empty_search
-      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => MongoidSearch::Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
+      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => MongoidSearch::Util.normalize_keywords(query, keyword_stemmer(options), ignore_list).map { |q| /#{q}/ })
+    end
+
+    def keyword_stemmer(options={})
+      stemmer_class.new(:language => options[:language])
     end
 
     def search_relevant(query, options={})
       return criteria.all if query.blank? && allow_empty_search
 
-      keywords = MongoidSearch::Util.normalize_keywords(query, stem_keywords, ignore_list)
+      keywords = MongoidSearch::Util.normalize_keywords(query, keyword_stemmer(options), ignore_list)
 
       map = <<-EOS
         function() {
@@ -102,10 +109,18 @@ module Mongoid::Search
     update_attribute(:_keywords, set_keywords)
   end
 
+  def keyword_language
+    super if defined?(super)
+  end
+
+  def keyword_stemmer
+    self.class.stemmer_class.new(:language => keyword_language) if stem_keywords
+  end
+
   private
   def set_keywords
     self._keywords = self.search_fields.map do |field|
-      MongoidSearch::Util.keywords(self, field, stem_keywords, ignore_list)
+      MongoidSearch::Util.keywords(self, field, keyword_stemmer, ignore_list)
     end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
