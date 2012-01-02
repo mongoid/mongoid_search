@@ -8,6 +8,7 @@ require 'database_cleaner'
 require 'fast_stemmer'
 require 'yaml'
 require 'mongoid_search'
+require "lingua/stemmer"
 
 Mongoid.configure do |config|
   name = "mongoid_search_test"

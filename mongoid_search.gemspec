@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency("bson_ext", [">= 1.2"])
 
   s.add_development_dependency("fast-stemmer", ["~> 1.0.0"])
+  s.add_development_dependency("ruby-stemmer", [">= 0.8.3"])
 
   s.add_development_dependency("database_cleaner", ["~> 0.6.4"])
   s.add_development_dependency("rake", ["~> 0.8.7"])
