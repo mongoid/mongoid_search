@@ -11,10 +11,16 @@ module MongoidSearch
   class LinguaStemmer
     def initialize(*args, &block)
       @stemmer = ::Lingua::Stemmer.new(*args, &block)
+    rescue Lingua::StemmerError => e
+      raise unless e.message.include?("not available")
     end
 
     def call(word)
-      @stemmer.stem(word)
+      if @stemmer
+        @stemmer.stem(word)
+      else
+        word
+      end
     end
   end
 end
