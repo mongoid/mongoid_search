@@ -97,11 +97,8 @@ module Mongoid::Search
     end
   end
 
-  module InstanceMethods #:nodoc:
-    # Indexes the document keywords
-    def index_keywords!
-      update_attribute(:_keywords, set_keywords)
-    end
+  def index_keywords!
+    update_attribute(:_keywords, set_keywords)
   end
 
   private
