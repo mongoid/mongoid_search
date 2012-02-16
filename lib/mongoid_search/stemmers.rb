@@ -1,4 +1,14 @@
 module MongoidSearch
+  module Stemmers
+    def self.available
+      if defined?(::Stemmer)
+        FastStemmer
+      elsif defined?(::Lingua::Stemmer)
+        LinguaStemmer
+      end
+    end
+  end
+
   class FastStemmer
     def initialize(*args)
     end

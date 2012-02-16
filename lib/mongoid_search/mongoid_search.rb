@@ -25,7 +25,12 @@ module Mongoid::Search
       self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:relevant_search] : false
       self.stemmer_class      = options[:stemmer_class]
       self.stem_keywords      = !!stemmer_class || options[:stem_keywords]
-      self.stemmer_class    ||= MongoidSearch::FastStemmer
+      self.stemmer_class    ||= MongoidSearch::Stemmers.available
+
+      if stem_keywords && stemmer_class.nil?
+        raise "No stemmer found. Please, install either fast-stemmer or ruby-stemmer."
+      end
+
       self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
       self.search_fields      = (self.search_fields || []).concat args
 
