@@ -3,8 +3,8 @@ lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |s|
-  s.name = "mongoid_search"
-  s.version = "0.2.7"
+  s.name = "mongoid_search2"
+  s.version = "0.3.0.beta.1"
   s.authors = ["Mauricio Zaffari"]
   s.email =["mauricio@papodenerd.net"]
   s.homepage = "http://www.papodenerd.net/mongoid-search-full-text-search-for-your-mongoid-models/"
