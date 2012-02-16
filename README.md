@@ -1,14 +1,17 @@
 Mongoid Search
 ============
 
-Mongoid Search is a simple full text search implementation for Mongoid ORM.
+Mongoid Search is a simple full text search implementation for Mongoid ORM. Modified to work with multiple stemming libraries: [fast-stemmer](https://github.com/romanbsd/fast-stemmer) and [ruby-stemmer](https://github.com/aurelian/ruby-stemmer).
 
 Installation
 --------
 
 In your Gemfile:
 
-    gem 'mongoid_search'
+    gem 'mongoid_search2', :require => 'mongoid_search'
+    # Optional keyword stemming library:
+    # gem 'fast-stemmer' # only English
+    # gem 'ruby-stemmer', :require => 'lingua/stemmer' # English, Russian etc
 
 Then:
 
@@ -111,6 +114,9 @@ ignore_list:
       a, an, to, from, as
       
   You can include how many keywords you like.
+
+stem\_keywords:
+  Whether to stem keywords or not.
 
 TODO
 ----
