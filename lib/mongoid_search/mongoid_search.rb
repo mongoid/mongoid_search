@@ -22,8 +22,8 @@ module Mongoid::Search
       options = args.last.is_a?(Hash) && [:match, :allow_empty_search, :relevant_search, :stem_keywords, :ignore_list].include?(args.last.keys.first) ? args.pop : {}
       self.match              = [:any, :all].include?(options[:match]) ? options[:match] : :any
       self.allow_empty_search = [true, false].include?(options[:allow_empty_search]) ? options[:allow_empty_search] : false
-      self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:allow_empty_search] : false
-      self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:allow_empty_search] : false
+      self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:relevant_search] : false
+      self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:stem_keywords] : false
       self.stemmer_class      = options.fetch(:stemmer_class, MongoidSearch::FastStemmer)
       self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
       self.search_fields      = (self.search_fields || []).concat args
