@@ -33,11 +33,23 @@ describe MongoidSearch::Util do
   end
 
   it "should stem keywords" do
-    Util.normalize_keywords("A runner running and eating", true, "").should == ["runner", "run", "and", "eat"]
+    Util.normalize_keywords("A runner running and eating", MongoidSearch::FastStemmer.new, "").should == ["runner", "run", "and", "eat"]
+  end
+
+  it "should stem keywords with ruby-stemmer" do
+    Util.normalize_keywords("A runner running and eating", MongoidSearch::LinguaStemmer.new, "").should == ["runner", "run", "and", "eat"]
+  end
+
+  it "should stem russian keywords" do
+    Util.normalize_keywords('Города в России бывают очень красивыми', MongoidSearch::LinguaStemmer.new(:language => 'ru'), "").should == %w( город росс быва очен красив )
+  end
+
+  it "should not stem unsupported-language keywords with ruby-stemmer" do
+    Util.normalize_keywords("Bakı", MongoidSearch::LinguaStemmer.new(:language => 'az'), "").should == ["bakı"]
   end
 
   it "should ignore keywords from ignore list" do
-    Util.normalize_keywords("An amazing awesome runner running and eating", true, YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]).should == ["an", "runner", "run", "and", "eat"]
+    Util.normalize_keywords("An amazing awesome runner running and eating", MongoidSearch::FastStemmer.new, YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]).should == ["an", "runner", "run", "and", "eat"]
   end
 
   it "should ignore keywords with less than two words" do
