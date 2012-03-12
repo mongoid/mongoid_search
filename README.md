@@ -8,7 +8,7 @@ Installation
 
 In your Gemfile:
 
-    gem 'mongoid_search2', :require => 'mongoid_search'
+    gem 'mongoid_search2', '~> 0.3.0.beta.2', :require => 'mongoid_search'
     # Optional keyword stemming library:
     # gem 'fast-stemmer' # only English
     # gem 'ruby-stemmer', :require => 'lingua/stemmer' # English, Russian etc
