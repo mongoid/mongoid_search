@@ -3,7 +3,7 @@ PATH
   specs:
     mongoid_search2 (0.3.0.beta.2)
       bson_ext (>= 1.2)
-      mongoid (>= 2.0.0)
+      mongoid (~> 2.0)
 
 GEM
   remote: http://rubygems.org/
