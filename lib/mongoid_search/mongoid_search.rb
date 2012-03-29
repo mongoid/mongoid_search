@@ -58,7 +58,7 @@ module Mongoid::Search
     end
 
     def keyword_stemmer(options={})
-      stemmer_class.new(:language => options[:language])
+      stemmer_class.new(:language => options[:language]) if stem_keywords
     end
 
     def search_relevant(query, options={})
