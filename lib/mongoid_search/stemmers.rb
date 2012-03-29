@@ -1,15 +1,15 @@
 module MongoidSearch
   module Stemmers
     def self.available
-      if defined?(::Stemmer)
-        FastStemmer
-      elsif defined?(::Lingua::Stemmer)
-        LinguaStemmer
-      end
+      [FastStemmer, LinguaStemmer].find(&:available?)
     end
   end
 
   class FastStemmer
+    def self.available?
+      defined?(::Lingua::Stemmer)
+    end
+
     def initialize(*args)
     end
 
@@ -19,6 +19,10 @@ module MongoidSearch
   end
 
   class LinguaStemmer
+    def self.available?
+      defined?(::Stemmer)
+    end
+
     def initialize(*args, &block)
       @stemmer = ::Lingua::Stemmer.new(*args, &block)
     rescue Lingua::StemmerError => e
