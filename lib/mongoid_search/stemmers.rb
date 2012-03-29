@@ -7,7 +7,7 @@ module MongoidSearch
 
   class FastStemmer
     def self.available?
-      defined?(::Lingua::Stemmer)
+      defined?(::Stemmer)
     end
 
     def initialize(*args)
@@ -20,7 +20,7 @@ module MongoidSearch
 
   class LinguaStemmer
     def self.available?
-      defined?(::Stemmer)
+      defined?(::Lingua::Stemmer)
     end
 
     def initialize(*args, &block)
