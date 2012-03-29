@@ -23,6 +23,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("rspec", ["~> 2.4"])
 
   s.require_path = "lib"
-  s.files = Dir.glob("lib/**/*") + %w(LICENSE README.md Rakefile)
-  s.test_files = Dir.glob("spec/**/*")
+  s.files = IO.read('Manifest.txt').split("\n")
 end
