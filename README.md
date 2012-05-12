@@ -96,8 +96,8 @@ To do that you need to define `keyword_language` instance method. It will be use
 
 Then you need to specify :language option when searching. It will be used to stem the search terms:
 
-  Product.search("медведи", :language => :ru) # will match медведь, медведей
-  Product.search(keywords,  :language => I18n.locale) # it can also be variable
+    Product.search("медведи", :language => :ru) # will match медведь, медведей
+    Product.search(keywords,  :language => I18n.locale) # it can also be variable
 
 Options
 -------
