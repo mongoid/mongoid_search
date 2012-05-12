@@ -74,6 +74,30 @@ code to search for 'iphone' in products cheaper than $499
 In this case we have to use csearch, an alias for search, because since v2.0.0
 Mongoid defines it's own Criteria.search method.
 
+Different language
+------------------
+
+If you choose ruby-stemmer library you can search for keywords in different languages.
+To do that you need to define `keyword_language` instance method. It will be used for stemming the keywords of a document when it is saved.
+
+    require "lingua/stemmer"
+
+    class Product
+      search_in :name, :stem_keywords => true
+
+      # static language
+      def keyword_language
+        :ru
+      end
+
+      # you can also make a field instead for a variable language
+      # field :keyword_language, :type => Boolean
+    end
+
+Then you need to specify :language option when searching. It will be used to stem the search terms:
+
+  Product.search("медведи", :language => :ru) # will match медведь, медведей
+  Product.search(keywords,  :language => I18n.locale) # it can also be variable
 
 Options
 -------
