@@ -13,7 +13,11 @@ module Util
               attribute.map(&method).map { |t| Util.normalize_keywords t, stem_keywords, ignore_list }
             end
           else
-            Util.normalize_keywords(attribute.send(method), stem_keywords, ignore_list)
+            if attribute.respond_to?(method)
+              Util.normalize_keywords(attribute.send(method), stem_keywords, ignore_list)
+            else # If the field is a serialized hash
+              Util.normalize_keywords(klass.send(key)[method.to_sym], stem_keywords, ignore_list)
+            end
           end
         end
       end
