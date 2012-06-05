@@ -12,6 +12,12 @@ module Util
             else
               attribute.map(&method).map { |t| Util.normalize_keywords t, stem_keywords, ignore_list }
             end
+          elsif attribute.is_a?(Hash)
+            if method.is_a?(Array)
+              method.map {|m| Util.normalize_keywords attribute[m.to_sym], stem_keywords, ignore_list }
+            else
+              Util.normalize_keywords(attribute[method.to_sym], stem_keywords, ignore_list)
+            end
           else
             Util.normalize_keywords(attribute.send(method), stem_keywords, ignore_list)
           end
