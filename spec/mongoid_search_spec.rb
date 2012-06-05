@@ -11,7 +11,30 @@ describe Mongoid::Search do
                               :name => "iPhone",
                               :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
                               :category => Category.new(:name => "Mobile"),
-                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")]
+                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
+                              :info => { :summary => "Info-summary",
+                                         :description => "Info-description"}
+  end
+
+  describe "Serialized hash fields" do
+    context "when the hash is populated" do
+      it "should return the product" do
+        Product.search("Info-summary").first.should eq @product
+        Product.search("Info-description").first.should eq @product
+      end
+    end
+
+    context "when the hash is empty" do
+      before(:each) do
+        @product.info = nil
+        @product.save
+      end
+
+      it "should not return the product" do
+        Product.search("Info-description").size.should eq 0
+        Product.search("Info-summary").size.should eq 0
+      end
+    end
   end
 
   context "utf-8 characters" do
@@ -40,7 +63,7 @@ describe Mongoid::Search do
         lambda { Product.create! }.should_not raise_error
       end
     end
-    
+
     subject { Product.create :brand => "Apple", :name => "iPhone" }
 
     its(:_keywords) { should == ["apple", "iphone"] }
@@ -66,13 +89,13 @@ describe Mongoid::Search do
   it "should set the _keywords field with stemmed words if stem is enabled" do
     Product.stem_keywords = true
     @product.save!
-    @product._keywords.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "ol"]
+    @product._keywords.sort.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "ol", "info", "descript", "summari"].sort
   end
 
   it "should ignore keywords in an ignore list" do
     Product.ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
     @product.save!
-    @product._keywords.should == ["apple", "craddle", "iphone", "mobile", "ole"]
+    @product._keywords.sort.should == ["apple", "craddle", "iphone", "mobile", "ole", "info", "description", "summary"].sort
   end
 
    it "should incorporate numbers as keywords" do
@@ -157,5 +180,5 @@ describe Mongoid::Search do
     Product.index_keywords!.should_not include(false)
   end
 
-  
+
 end
