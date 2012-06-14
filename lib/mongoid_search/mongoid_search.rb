@@ -26,7 +26,7 @@ module Mongoid::Search
       self.search_fields      = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
-      index :_keywords, :background => true
+      index({_keywords: 1}, {background: true})
 
       before_save :set_keywords
     end
