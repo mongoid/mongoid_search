@@ -26,7 +26,8 @@ module Mongoid::Search
       self.search_fields      = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
-      index :_keywords, :background => true
+      
+      Gem.loaded_specs["mongoid"].version.to_s.include?("3.0") ? (index({_keywords: 1}, {background: true})) : (index :_keywords, :background => true)
 
       before_save :set_keywords
     end
