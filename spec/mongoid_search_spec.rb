@@ -86,6 +86,16 @@ describe Mongoid::Search do
     Variant.search(:name => 'Apple', :color => :white).should eq [variant]
   end
 
+  it "should expand the ligature to ease searching" do
+    # ref: http://en.wikipedia.org/wiki/Typographic_ligature, only for french right now. Rules for other languages are not know
+    variant1 = Variant.create :tags => ["œuvre"].map {|tag| Tag.new(:name => tag)}
+    variant2 = Variant.create :tags => ["æquo"].map {|tag| Tag.new(:name => tag)}
+
+    Variant.search("œuvre").should eq [variant1]
+    Variant.search("oeuvre").should eq [variant1]
+    Variant.search("æquo").should eq [variant2]
+    Variant.search("aequo").should eq [variant2]
+  end
   it "should set the _keywords field with stemmed words if stem is enabled" do
     Product.stem_keywords = true
     @product.save!
