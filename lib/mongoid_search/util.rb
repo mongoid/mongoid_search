@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Util
 
   def self.keywords(klass, field, stem_keywords, ignore_list)
@@ -31,6 +32,8 @@ module Util
   end
 
   def self.normalize_keywords(text, stem_keywords, ignore_list)
+    ligatures = {"œ"=>"oe", "æ"=>"ae"}
+
     return [] if text.blank?
     text = text.to_s.
       mb_chars.
@@ -39,6 +42,7 @@ module Util
       to_s.
       gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
       gsub(/[^[:alnum:]\s]/,'').   # strip accents
+      gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
       split(' ').
       reject { |word| word.size < 2 }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
