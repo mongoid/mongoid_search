@@ -6,9 +6,9 @@ class Product
   field :attrs, :type => Array
   field :info, :type => Hash
 
-  references_many :tags
-  referenced_in   :category
-  embeds_many     :subproducts
+  has_many    :tags
+  belongs_to  :category
+  embeds_many :subproducts
 
   search_in :brand, :name, :outlet, :attrs, :tags => :name, :category => :name,
             :subproducts => [:brand, :name], :info => [ :summary, :description ]

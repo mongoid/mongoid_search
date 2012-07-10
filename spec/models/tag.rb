@@ -2,5 +2,5 @@ class Tag
   include Mongoid::Document
   field :name
 
-  referenced_in :product
+  belongs_to :product
 end

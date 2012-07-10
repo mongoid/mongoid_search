@@ -10,8 +10,7 @@ require 'yaml'
 require 'mongoid_search'
 
 Mongoid.configure do |config|
-  name = "mongoid_search_test"
-  config.master = Mongo::Connection.new.db(name)
+  config.connect_to "mongoid_search_test"
 end
 
 Dir["#{File.dirname(__FILE__)}/models/*.rb"].each { |file| require file }

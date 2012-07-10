@@ -1,7 +1,7 @@
 # encoding: utf-8
 module Util
 
-  def self.keywords(klass, field, stem_keywords, ignore_list)
+  def self.keywords(klass, field)
     if field.is_a?(Hash)
       field.keys.map do |key|
         attribute = klass.send(key)
@@ -9,30 +9,32 @@ module Util
           method = field[key]
           if attribute.is_a?(Array)
             if method.is_a?(Array)
-              method.map {|m| attribute.map { |a| Util.normalize_keywords a.send(m), stem_keywords, ignore_list } }
+              method.map {|m| attribute.map { |a| Util.normalize_keywords a.send(m) } }
             else
-              attribute.map(&method).map { |t| Util.normalize_keywords t, stem_keywords, ignore_list }
+              attribute.map(&method).map { |t| Util.normalize_keywords t }
             end
           elsif attribute.is_a?(Hash)
             if method.is_a?(Array)
-              method.map {|m| Util.normalize_keywords attribute[m.to_sym], stem_keywords, ignore_list }
+              method.map {|m| Util.normalize_keywords attribute[m.to_sym] }
             else
-              Util.normalize_keywords(attribute[method.to_sym], stem_keywords, ignore_list)
+              Util.normalize_keywords(attribute[method.to_sym])
             end
           else
-            Util.normalize_keywords(attribute.send(method), stem_keywords, ignore_list)
+            Util.normalize_keywords(attribute.send(method))
           end
         end
       end
     else
       value = klass[field]
       value = value.join(' ') if value.respond_to?(:join)
-      Util.normalize_keywords(value, stem_keywords, ignore_list) if value
+      Util.normalize_keywords(value) if value
     end
   end
 
-  def self.normalize_keywords(text, stem_keywords, ignore_list)
-    ligatures = {"œ"=>"oe", "æ"=>"ae"}
+  def self.normalize_keywords(text)
+    ligatures     = Mongoid::Search.ligatures
+    ignore_list   = Mongoid::Search.ignore_list
+    stem_keywords = Mongoid::Search.stem_keywords
 
     return [] if text.blank?
     text = text.to_s.
@@ -44,7 +46,7 @@ module Util
       gsub(/[^[:alnum:]\s]/,'').   # strip accents
       gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
       split(' ').
-      reject { |word| word.size < 2 }
+      reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
     text = text.map(&:stem) if stem_keywords
     text

@@ -1,100 +1,103 @@
 module Mongoid::Search
-  extend ActiveSupport::Concern
-
-  included do
-    cattr_accessor :search_fields, :match, :allow_empty_search, :relevant_search, :stem_keywords, :ignore_list
-  end
-
   def self.included(base)
-    @classes ||= []
-    @classes << base
+    base.send(:cattr_accessor, :search_fields)
+
+    base.extend ClassMethods
+
+    @@classes ||= []
+    @@classes << base
   end
 
   def self.classes
-    @classes
+    @@classes
   end
 
   module ClassMethods #:nodoc:
     # Set a field or a number of fields as sources for search
     def search_in(*args)
-      options = args.last.is_a?(Hash) && [:match, :allow_empty_search, :relevant_search, :stem_keywords, :ignore_list].include?(args.last.keys.first) ? args.pop : {}
-      self.match              = [:any, :all].include?(options[:match]) ? options[:match] : :any
-      self.allow_empty_search = [true, false].include?(options[:allow_empty_search]) ? options[:allow_empty_search] : false
-      self.relevant_search    = [true, false].include?(options[:relevant_search]) ? options[:allow_empty_search] : false
-      self.stem_keywords      = [true, false].include?(options[:stem_keywords]) ? options[:allow_empty_search] : false
-      self.ignore_list        = YAML.load(File.open(options[:ignore_list]))["ignorelist"] if options[:ignore_list].present?
-      self.search_fields      = (self.search_fields || []).concat args
+      args, options = args_and_options(args)
+      self.search_fields = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
-      
-      Gem.loaded_specs["mongoid"].version.to_s.include?("3.0") ? (index({_keywords: 1}, {background: true})) : (index :_keywords, :background => true)
+
+      index({ :_keywords => 1 }, { :background => true })
 
       before_save :set_keywords
     end
 
-    def search(query, options={})
-      if relevant_search
+    def full_text_search(query, options={})
+      options = extract_options(options)
+      return (options[:allow_empty_search] ? criteria.all : []) if query.blank?
+
+      if options[:relevant_search]
         search_relevant(query, options)
       else
         search_without_relevance(query, options)
       end
     end
 
-    # Mongoid 2.0.0 introduces Criteria.seach so we need to provide
-    # alternate method
-    alias csearch search
-
-    def search_without_relevance(query, options={})
-      return criteria.all if query.blank? && allow_empty_search
-      criteria.send("#{(options[:match]||self.match).to_s}_in", :_keywords => Util.normalize_keywords(query, stem_keywords, ignore_list).map { |q| /#{q}/ })
-    end
-
-    def search_relevant(query, options={})
-      return criteria.all if query.blank? && allow_empty_search
-
-      keywords = Util.normalize_keywords(query, stem_keywords, ignore_list)
-
-      map = <<-EOS
-        function() {
-          var entries = 0
-          for(i in keywords)
-            for(j in this._keywords) {
-              if(this._keywords[j] == keywords[i])
-                entries++
-            }
-          if(entries > 0)
-            emit(this._id, entries)
-        }
-      EOS
-      reduce = <<-EOS
-        function(key, values) {
-          return(values[0])
-        }
-      EOS
-
-      #raise [self.class, self.inspect].inspect
-
-      kw_conditions = keywords.map do |kw|
-        {:_keywords => kw}
-      end
-
-      criteria = (criteria || self).any_of(*kw_conditions)
-
-      query = criteria.selector
-
-      options.delete(:limit)
-      options.delete(:skip)
-      options.merge! :scope => {:keywords => keywords}, :query => query
-
-      # res = collection.map_reduce(map, reduce, options)
-      # res.find.sort(['value', -1]) # Cursor
-      collection.map_reduce(map, reduce, options)
-    end
+    # Keeping these aliases for compatibility purposes
+    alias csearch full_text_search
+    alias search full_text_search
 
     # Goes through all documents in the class that includes Mongoid::Search
     # and indexes the keywords.
     def index_keywords!
       all.each { |d| d.index_keywords! ? Log.green(".") : Log.red("F") }
+    end
+
+    private
+    def query(keywords, options)
+      criteria.send("#{(options[:match]).to_s}_of", *keywords.map { |kw| { :_keywords => Mongoid::Search.regex.call(kw) } })
+    end
+
+    def args_and_options(args)
+      options = args.last.is_a?(Hash) &&
+                [:match,
+                 :allow_empty_search,
+                 :relevant_search].include?(args.last.keys.first) ? args.pop : {}
+
+      [args, extract_options(options)]
+    end
+
+    def extract_options(options)
+      {
+        :match              => options[:match]              || Mongoid::Search.match,
+        :allow_empty_search => options[:allow_empty_search] || Mongoid::Search.allow_empty_search,
+        :relevant_search    => options[:relevant_search]    || Mongoid::Search.relevant_search
+      }
+    end
+
+    def search_without_relevance(query, options)
+      query(Util.normalize_keywords(query), options)
+    end
+
+    def search_relevant(query, options)
+      keywords = Util.normalize_keywords(query)
+
+      map = %Q{
+        function() {
+          var entries = 0;
+          for(i in keywords) {
+            for(j in this._keywords) {
+              if(this._keywords[j] == keywords[i]) {
+                entries++;
+              }
+            }
+          }
+          if(entries > 0) {
+            emit(this._id, entries);
+          }
+        }
+      }
+
+      reduce = %Q{
+        function(key, values) {
+          return(values[0]);
+        }
+      }
+
+      query(keywords, options).map_reduce(map, reduce).out(:inline => 1)
     end
   end
 
@@ -105,7 +108,7 @@ module Mongoid::Search
   private
   def set_keywords
     self._keywords = self.search_fields.map do |field|
-      Util.keywords(self, field, stem_keywords, ignore_list)
+      Util.keywords(self, field)
     end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
