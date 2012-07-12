@@ -162,6 +162,16 @@ describe Mongoid::Search do
     Product.full_text_search("apple motorola", :match => :all).size.should == 0
   end
 
+  it "should return no results when a blank search is made" do
+    Mongoid::Search.allow_empty_search = false
+    Product.full_text_search("").size.should == 0
+  end
+
+  it "should return results when a blank search is made when :allow_empty_search is true" do
+    Mongoid::Search.allow_empty_search = true
+    Product.full_text_search("").size.should == 1
+  end
+
   it "should search for embedded documents" do
     Product.full_text_search("craddle").size.should == 1
   end
