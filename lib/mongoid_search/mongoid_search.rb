@@ -48,7 +48,12 @@ module Mongoid::Search
 
     private
     def query(keywords, options)
-      criteria.send("#{(options[:match]).to_s}_of", *keywords.map { |kw| { :_keywords => Mongoid::Search.regex.call(kw) } })
+      keywords_hash = keywords.map do |kw|
+        kw = Mongoid::Search.regex.call(kw) if Mongoid::Search.regex_search
+        { :_keywords => kw }
+      end
+
+      criteria.send("#{(options[:match]).to_s}_of", *keywords_hash)
     end
 
     def args_and_options(args)
@@ -73,6 +78,18 @@ module Mongoid::Search
     end
 
     def search_relevant(query, options)
+      results_with_relevance(query, options).sort { |o| o['value'] }.map do |r|
+
+        new(r['_id'].merge(:relevance => r['value'])) do |o|
+          # Need to match the actual object
+          o.instance_variable_set('@new_record', false)
+          o._id = r['_id']['_id']
+        end
+
+      end
+    end
+
+    def results_with_relevance(query, options)
       keywords = Util.normalize_keywords(query)
 
       map = %Q{
@@ -86,18 +103,18 @@ module Mongoid::Search
             }
           }
           if(entries > 0) {
-            emit(this._id, entries);
+            emit(this, entries);
           }
         }
       }
 
       reduce = %Q{
         function(key, values) {
-          return(values[0]);
+          return(values);
         }
       }
 
-      query(keywords, options).map_reduce(map, reduce).out(:inline => 1)
+      query(keywords, options).map_reduce(map, reduce).scope(:keywords => keywords).out(:inline => 1)
     end
   end
 

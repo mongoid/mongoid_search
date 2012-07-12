@@ -6,39 +6,43 @@ require 'mongoid_search/log'
 require 'mongoid_search/mongoid_search'
 
 module Mongoid::Search
-  # Default matching type. Match :any or :all searched keywords
+  ## Default matching type. Match :any or :all searched keywords
   mattr_accessor :match
   @@match = :any
 
-  # If true, an empty search will return all objects
+  ## If true, an empty search will return all objects
   mattr_accessor :allow_empty_search
   @@allow_empty_search = false
 
-  # If true, will search with relevance information
+  ## If true, will search with relevance information
   mattr_accessor :relevant_search
   @@relevant_search = false
 
-  # Stem keywords
+  ## Stem keywords
   mattr_accessor :stem_keywords
   @@stem_keywords = false
 
-  # Words to ignore
+  ## Words to ignore
   mattr_accessor :ignore_list
-  @@ignore_list = %w{ a an to from as }
-  # From a file
+  @@ignore_list = []
+
+  ## An array of words
+  # @@ignore_list = %w{ a an to from as }
+
+  ## Or from a file
   # @@ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
 
-  # Search using regex (slower)
+  ## Search using regex (slower)
   mattr_accessor :regex_search
   @@regex_search = true
 
-  # Regex to search
+  ## Regex to search
   mattr_accessor :regex
 
-  # Match partial words on both sides (slower)
+  ## Match partial words on both sides (slower)
   @@regex = Proc.new { |query| /#{query}/ }
 
-  # Match partial words on the beginning or in the end (slightly faster)
+  ## Match partial words on the beginning or in the end (slightly faster)
   # @@regex = Proc.new { |query| /ˆ#{query}/ }
   # @@regex = Proc.new { |query| /#{query}$/ }
 

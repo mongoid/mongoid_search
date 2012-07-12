@@ -5,6 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Mongoid::Search do
 
   before(:each) do
+    Mongoid::Search.match         = :any
     Mongoid::Search.stem_keywords = false
     Mongoid::Search.ignore_list   = nil
     @product = Product.create :brand => "Apple",
@@ -116,7 +117,7 @@ describe Mongoid::Search do
                               :category => Category.new(:name => "Vehicle")
 
       @product.save!
-      @product._keywords.should == ["1908","amazing", "car", "first", "ford",  "vehicle"]
+      @product._keywords.should == ["1908", "amazing", "car", "first", "ford",  "vehicle"]
    end
 
 
@@ -139,7 +140,7 @@ describe Mongoid::Search do
     Product.full_text_search("oLe").size.should == 1
   end
 
-  it "should return results in search with a partial word" do
+  it "should return results in search with a partial word by default" do
     Product.full_text_search("iph").size.should == 1
   end
 
@@ -161,16 +162,6 @@ describe Mongoid::Search do
     Product.full_text_search("apple motorola", :match => :all).size.should == 0
   end
 
-  it "should return no results when a blank search is made" do
-    Mongoid::Search.allow_empty_search = false
-    Product.full_text_search("").size.should == 0
-  end
-
-  it "should return results when a blank search is made when :allow_empty_search is true" do
-    Mongoid::Search.allow_empty_search = true
-    Product.full_text_search("").size.should == 1
-  end
-
   it "should search for embedded documents" do
     Product.full_text_search("craddle").size.should == 1
   end
@@ -190,5 +181,38 @@ describe Mongoid::Search do
 
   it 'should have a class method to index all documents keywords' do
     Product.index_keywords!.should_not include(false)
+  end
+
+  context "when regex search is false" do
+    before do
+      Mongoid::Search.regex_search = false
+    end
+
+    it "should not return results in search with a partial word if not using regex search" do
+      Product.full_text_search("iph").size.should == 0
+    end
+
+    it "should return results in search with a full word if not using regex search" do
+      Product.full_text_search("iphone").size.should == 1
+    end
+  end
+
+  context "relevant search" do
+    before do
+      Mongoid::Search.relevant_search = true
+      @imac = Product.create :name => 'apple imac'
+    end
+
+    it "should return results ordered by relevance and with correct ids" do
+      Product.full_text_search('apple imac').map(&:_id).should == [@imac._id, @product._id]
+    end
+
+    it "results should be recognized as persisted objects" do
+      Product.full_text_search('apple imac').map(&:persisted?).should_not include false
+    end
+
+    it "should include relevance information" do
+      Product.full_text_search('apple imac').map(&:relevance).should == [2, 1]
+    end
   end
 end
