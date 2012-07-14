@@ -1,4 +1,7 @@
-## 0.3.0 HEAD
+## 0.3.0
+The final release, includes support for different stemming libraries and various fixes.
+
+## 0.3.0.rc1
 * Fix keyword stemming working even if stem\_keywords is set to false.
 * Depend on Mongoid 2.x
 * Remove bson\_ext dependency (C-extension)
