@@ -1,5 +1,5 @@
 # encoding: utf-8
-module Util
+module Mongoid::Search::Util
 
   def self.keywords(klass, field)
     if field.is_a?(Hash)
@@ -9,25 +9,25 @@ module Util
           method = field[key]
           if attribute.is_a?(Array)
             if method.is_a?(Array)
-              method.map {|m| attribute.map { |a| Util.normalize_keywords a.send(m) } }
+              method.map {|m| attribute.map { |a| normalize_keywords a.send(m) } }
             else
-              attribute.map(&method).map { |t| Util.normalize_keywords t }
+              attribute.map(&method).map { |t| normalize_keywords t }
             end
           elsif attribute.is_a?(Hash)
             if method.is_a?(Array)
-              method.map {|m| Util.normalize_keywords attribute[m.to_sym] }
+              method.map {|m| normalize_keywords attribute[m.to_sym] }
             else
-              Util.normalize_keywords(attribute[method.to_sym])
+              normalize_keywords(attribute[method.to_sym])
             end
           else
-            Util.normalize_keywords(attribute.send(method))
+            normalize_keywords(attribute.send(method))
           end
         end
       end
     else
       value = klass[field]
       value = value.join(' ') if value.respond_to?(:join)
-      Util.normalize_keywords(value) if value
+      normalize_keywords(value) if value
     end
   end
 

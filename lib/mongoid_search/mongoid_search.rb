@@ -90,7 +90,7 @@ module Mongoid::Search
     end
 
     def results_with_relevance(query, options)
-      keywords = Util.normalize_keywords(query)
+      keywords = Mongoid::Search::Util.normalize_keywords(query)
 
       map = %Q{
         function() {
@@ -125,7 +125,7 @@ module Mongoid::Search
   private
   def set_keywords
     self._keywords = self.search_fields.map do |field|
-      Util.keywords(self, field)
+      Mongoid::Search::Util.keywords(self, field)
     end.flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end

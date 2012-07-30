@@ -1,4 +1,4 @@
-class Log
+class Mongoid::Search::Log
   cattr_accessor :silent
 
   def self.log(message)

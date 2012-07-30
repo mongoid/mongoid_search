@@ -1,8 +1,6 @@
 # encoding: utf-8
 
 require 'mongoid_search/railtie' if defined?(Rails)
-require 'mongoid_search/util'
-require 'mongoid_search/log'
 require 'mongoid_search/mongoid_search'
 
 module Mongoid::Search
@@ -55,3 +53,6 @@ module Mongoid::Search
   mattr_accessor :minimum_word_size
   @@minimum_word_size = 2
 end
+
+require 'mongoid_search/util'
+require 'mongoid_search/log'
