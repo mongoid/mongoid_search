@@ -52,6 +52,10 @@ module Mongoid::Search
   # Minimum word size. Words smaller than it won't be indexed
   mattr_accessor :minimum_word_size
   @@minimum_word_size = 2
+
+  def self.setup
+    yield self
+  end
 end
 
 require 'mongoid_search/util'
