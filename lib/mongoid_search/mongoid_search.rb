@@ -27,7 +27,7 @@ module Mongoid::Search
 
       field :_keywords, :type => Array
       
-      Gem.loaded_specs["mongoid"].version.to_s.include?("3.0") ? (index({_keywords: 1}, {background: true})) : (index :_keywords, :background => true)
+      Gem.loaded_specs["mongoid"].version.to_s.include?("3.0") ? (index({:_keywords => 1}, {:background => true})) : (index :_keywords, :background => true)
 
       before_save :set_keywords
     end
