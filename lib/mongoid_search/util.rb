@@ -35,6 +35,7 @@ module Mongoid::Search::Util
     ligatures     = Mongoid::Search.ligatures
     ignore_list   = Mongoid::Search.ignore_list
     stem_keywords = Mongoid::Search.stem_keywords
+    stem_proc     = Mongoid::Search.stem_proc
 
     return [] if text.blank?
     text = text.to_s.
@@ -48,7 +49,7 @@ module Mongoid::Search::Util
       split(' ').
       reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
-    text = text.map(&:stem) if stem_keywords
+    text = text.map(&stem_proc) if stem_keywords
     text
   end
 

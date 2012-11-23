@@ -20,6 +20,10 @@ module Mongoid::Search
   mattr_accessor :stem_keywords
   @@stem_keywords = false
 
+  ## Stem procedure
+  mattr_accessor :stem_proc
+  @@stem_proc = Proc.new { |word| word.stem }
+
   ## Words to ignore
   mattr_accessor :ignore_list
   @@ignore_list = []

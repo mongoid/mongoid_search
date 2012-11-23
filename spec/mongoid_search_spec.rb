@@ -4,10 +4,19 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Mongoid::Search do
 
+  before(:all) do
+    @default_proc = Mongoid::Search.stem_proc
+  end
+
+  after(:all) do
+    Mongoid::Search.stem_proc = @default_proc
+  end
+
   before(:each) do
     Mongoid::Search.match         = :any
     Mongoid::Search.stem_keywords = false
     Mongoid::Search.ignore_list   = nil
+    Mongoid::Search.stem_proc     = @default_proc
     @product = Product.create :brand => "Apple",
                               :name => "iPhone",
                               :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
@@ -102,6 +111,13 @@ describe Mongoid::Search do
     Mongoid::Search.stem_keywords = true
     @product.save!
     @product._keywords.sort.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "ol", "info", "descript", "summari"].sort
+  end
+
+  it "should set the _keywords field with custom stemmed words if stem is enabled with a custom lambda" do
+    Mongoid::Search.stem_keywords = true
+    Mongoid::Search.stem_proc     = Proc.new { |word| word.upcase }
+    @product.save!
+    @product._keywords.sort.should == ["AMAZING", "APPLE", "AWESOME", "CRADDLE", "DESCRIPTION", "INFO", "IPHONE", "MOBILE", "OLE", "SUMMARY"]
   end
 
   it "should ignore keywords in an ignore list" do

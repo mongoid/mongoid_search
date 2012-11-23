@@ -133,6 +133,10 @@ Alternatively, you can create an initializer to setup those options:
       ## Stem keywords
       config.stem_keywords = false
 
+      ## Add a custom proc returning strings to replace the default stemmer
+      # For example using ruby-stemmer:
+      # config.stem_proc = Proc.new { |word| Lingua.stemmer(word, :language => 'nl') }
+
       ## Words to ignore
       config.ignore_list = []
 
