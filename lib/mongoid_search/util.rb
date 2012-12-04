@@ -20,7 +20,11 @@ module Mongoid::Search::Util
               normalize_keywords(attribute[method.to_sym])
             end
           else
-            normalize_keywords(attribute.send(method))
+            if method.is_a?(Array)
+              method.map {|m| normalize_keywords attribute[m.to_sym] }
+            else
+              normalize_keywords(attribute.send(method))
+            end
           end
         end
       end
