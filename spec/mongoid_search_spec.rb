@@ -20,7 +20,7 @@ describe Mongoid::Search do
     @product = Product.create :brand => "Apple",
                               :name => "iPhone",
                               :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
-                              :category => Category.new(:name => "Mobile"),
+                              :category => Category.new(:name => "Mobile", :description => "Reviews"),
                               :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
                               :info => { :summary => "Info-summary",
                                          :description => "Info-description"}
@@ -110,20 +110,20 @@ describe Mongoid::Search do
   it "should set the _keywords field with stemmed words if stem is enabled" do
     Mongoid::Search.stem_keywords = true
     @product.save!
-    @product._keywords.sort.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "ol", "info", "descript", "summari"].sort
+    @product._keywords.sort.should == ["amaz", "appl", "awesom", "craddl", "iphon", "mobil", "review", "ol", "info", "descript", "summari"].sort
   end
 
   it "should set the _keywords field with custom stemmed words if stem is enabled with a custom lambda" do
     Mongoid::Search.stem_keywords = true
     Mongoid::Search.stem_proc     = Proc.new { |word| word.upcase }
     @product.save!
-    @product._keywords.sort.should == ["AMAZING", "APPLE", "AWESOME", "CRADDLE", "DESCRIPTION", "INFO", "IPHONE", "MOBILE", "OLE", "SUMMARY"]
+    @product._keywords.sort.should == ["AMAZING", "APPLE", "AWESOME", "CRADDLE", "DESCRIPTION", "INFO", "IPHONE", "MOBILE", "OLE", "REVIEWS", "SUMMARY"]
   end
 
   it "should ignore keywords in an ignore list" do
     Mongoid::Search.ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
     @product.save!
-    @product._keywords.sort.should == ["apple", "craddle", "iphone", "mobile", "ole", "info", "description", "summary"].sort
+    @product._keywords.sort.should == ["apple", "craddle", "iphone", "mobile", "reviews", "ole", "info", "description", "summary"].sort
   end
 
    it "should incorporate numbers as keywords" do
@@ -190,6 +190,10 @@ describe Mongoid::Search do
 
   it "should search for embedded documents" do
     Product.full_text_search("craddle").size.should == 1
+  end
+
+  it "should search for reference documents" do
+    Product.full_text_search("reviews").size.should == 1
   end
 
   it 'should work in a chainable fashion' do
