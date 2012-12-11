@@ -246,6 +246,12 @@ describe Mongoid::Search do
     end
   end
 
+  context "when using methods for keywords" do
+    it "should set the _keywords from methods" do
+      @tags.first._keywords.should include "amazing"
+    end
+  end
+
   context "when using grandparent's(deep) fields for keywords" do
     it "should set the _keywords from parent" do
       @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
