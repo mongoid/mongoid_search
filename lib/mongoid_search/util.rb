@@ -29,7 +29,7 @@ module Mongoid::Search::Util
         end
       end
     else
-      value = klass[field]
+      value = klass.send(field)
       value = value.join(' ') if value.respond_to?(:join)
       normalize_keywords(value) if value
     end
