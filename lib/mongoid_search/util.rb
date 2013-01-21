@@ -17,7 +17,13 @@ module Mongoid::Search::Util
         end
       end
     else
-      value = klass.respond_to?(fields) ? klass.send(fields) : klass[fields];
+      value = if klass.respond_to?(fields.to_s + "_translations")
+                klass.send(fields.to_s + "_translations").values
+              elsif klass.respond_to?(fields)
+                klass.send(fields)
+              else
+                value = klass[fields];
+              end
       value = value.join(' ') if value.respond_to?(:join)
       normalize_keywords(value) if value
     end

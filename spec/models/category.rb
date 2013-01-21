@@ -1,6 +1,6 @@
 class Category
   include Mongoid::Document
-  field :name
+  field :name, localize: true
   field :description
 
   has_many :products

@@ -252,16 +252,22 @@ describe Mongoid::Search do
     end
   end
 
-  context "when using grandparent's(deep) fields for keywords" do
-    it "should set the _keywords from parent" do
-      @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
-    end
-
+  context "when using deeply nested fields for keywords" do
     context "when explicitly calling set_keywords" do
         it "should set the _keywords from parent" do
           @tags.first.send(:set_keywords)
           @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
         end
+    end
+  end
+
+  context "when using localized fields" do
+    it "should set the keywords from all localizations" do
+      @product = Product.create :brand => "Ford",
+                            :name => "T 1908",
+                            :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
+                            :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
+      @product._keywords.should include("fahrzeug")
     end
   end
 end
