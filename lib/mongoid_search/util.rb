@@ -1,35 +1,29 @@
 # encoding: utf-8
 module Mongoid::Search::Util
-
-  def self.keywords(klass, field)
-    if field.is_a?(Hash)
-      field.keys.map do |key|
-        attribute = klass.send(key)
+  def self.keywords(klass, fields)
+    if fields.is_a?(Array)
+      fields.map do |field|
+        self.keywords(klass, field)
+      end
+    elsif fields.is_a?(Hash)
+      fields.keys.map do |field|
+        attribute = klass.send(field)
         unless attribute.blank?
-          method = field[key]
           if attribute.is_a?(Array)
-            if method.is_a?(Array)
-              method.map {|m| attribute.map { |a| normalize_keywords a.send(m) } }
-            else
-              attribute.map(&method).map { |t| normalize_keywords t }
-            end
-          elsif attribute.is_a?(Hash)
-            if method.is_a?(Array)
-              method.map {|m| normalize_keywords attribute[m.to_sym] }
-            else
-              normalize_keywords(attribute[method.to_sym])
-            end
+            attribute.map{ |a| self.keywords(a, fields[field]) }
           else
-            if method.is_a?(Array)
-              method.map {|m| normalize_keywords attribute[m.to_sym] }
-            else
-              normalize_keywords(attribute.send(method))
-            end
+            self.keywords(attribute, fields[field])
           end
         end
       end
     else
-      value = klass.send(field)
+      value = if klass.respond_to?(fields.to_s + "_translations")
+                klass.send(fields.to_s + "_translations").values
+              elsif klass.respond_to?(fields)
+                klass.send(fields)
+              else
+                value = klass[fields];
+              end
       value = value.join(' ') if value.respond_to?(:join)
       normalize_keywords(value) if value
     end

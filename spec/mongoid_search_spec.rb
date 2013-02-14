@@ -19,7 +19,7 @@ describe Mongoid::Search do
     Mongoid::Search.stem_proc     = @default_proc
     @product = Product.create :brand => "Apple",
                               :name => "iPhone",
-                              :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+                              :tags => (@tags = ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) }),
                               :category => Category.new(:name => "Mobile", :description => "Reviews"),
                               :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
                               :info => { :summary => "Info-summary",
@@ -79,6 +79,7 @@ describe Mongoid::Search do
     its(:_keywords) { should == ["apple", "iphone"] }
   end
 
+
   it "should set the _keywords field for array fields also" do
     @product.attrs = ['lightweight', 'plastic', :red]
     @product.save!
@@ -135,7 +136,6 @@ describe Mongoid::Search do
       @product.save!
       @product._keywords.should == ["1908", "amazing", "car", "first", "ford",  "vehicle"]
    end
-
 
   it "should return results in search" do
     Product.full_text_search("apple").size.should == 1
@@ -202,7 +202,7 @@ describe Mongoid::Search do
   end
 
   it 'should return the classes that include the search module' do
-    Mongoid::Search.classes.should == [Product]
+    Mongoid::Search.classes.should == [Product, Tag]
   end
 
   it 'should have a method to index keywords' do
@@ -243,6 +243,31 @@ describe Mongoid::Search do
 
     it "should include relevance information" do
       Product.full_text_search('apple imac').map(&:relevance).should == [2, 1]
+    end
+  end
+
+  context "when using methods for keywords" do
+    it "should set the _keywords from methods" do
+      @tags.first._keywords.should include "amazing"
+    end
+  end
+
+  context "when using deeply nested fields for keywords" do
+    context "when explicitly calling set_keywords" do
+        it "should set the _keywords from parent" do
+          @tags.first.send(:set_keywords)
+          @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
+        end
+    end
+  end
+
+  context "when using localized fields" do
+    it "should set the keywords from all localizations" do
+      @product = Product.create :brand => "Ford",
+                            :name => "T 1908",
+                            :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
+                            :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
+      @product._keywords.should include("fahrzeug")
     end
   end
 end
