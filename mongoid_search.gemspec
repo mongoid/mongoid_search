@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |s|
   s.name = "mongoid_search"
-  s.version = "0.3.1"
+  s.version = "0.3.2"
   s.authors = ["Mauricio Zaffari"]
   s.email =["mauricio@papodenerd.net"]
   s.homepage = "http://www.papodenerd.net/mongoid-search-full-text-search-for-your-mongoid-models/"
