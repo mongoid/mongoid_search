@@ -1,11 +1,10 @@
 module Mongoid::Search
-  def self.included(base)
-    base.send(:cattr_accessor, :search_fields)
+  extend ActiveSupport::Concern
 
-    base.extend ClassMethods
-
+  included do
+    cattr_accessor :search_fields
     @@classes ||= []
-    @@classes << base
+    @@classes << self
   end
 
   def self.classes
@@ -47,84 +46,84 @@ module Mongoid::Search
     end
 
     private
-    def query(keywords, options)
-      keywords_hash = keywords.map do |kw|
-        kw = Mongoid::Search.regex.call(kw) if Mongoid::Search.regex_search
-        { :_keywords => kw }
-      end
 
-      criteria.send("#{(options[:match]).to_s}_of", *keywords_hash)
-    end
-
-    def args_and_options(args)
-      options = args.last.is_a?(Hash) &&
-                [:match,
-                 :allow_empty_search,
-                 :relevant_search].include?(args.last.keys.first) ? args.pop : {}
-
-      [args, extract_options(options)]
-    end
-
-    def extract_options(options)
-      {
-        :match              => options[:match]              || Mongoid::Search.match,
-        :allow_empty_search => options[:allow_empty_search] || Mongoid::Search.allow_empty_search,
-        :relevant_search    => options[:relevant_search]    || Mongoid::Search.relevant_search
-      }
-    end
-
-    def search_without_relevance(query, options)
-      query(Util.normalize_keywords(query), options)
-    end
-
-    def search_relevant(query, options)
-      results_with_relevance(query, options).sort { |o| o['value'] }.map do |r|
-
-        new(r['_id'].merge(:relevance => r['value'])) do |o|
-          # Need to match the actual object
-          o.instance_variable_set('@new_record', false)
-          o._id = r['_id']['_id']
+      def query(keywords, options)
+        keywords_hash = keywords.map do |kw|
+          kw = Mongoid::Search.regex.call(kw) if Mongoid::Search.regex_search
+          { :_keywords => kw }
         end
 
+        criteria.send("#{(options[:match]).to_s}_of", *keywords_hash)
+      end
+
+      def args_and_options(args)
+        options = args.last.is_a?(Hash) &&
+                  [:match,
+                   :allow_empty_search,
+                   :relevant_search].include?(args.last.keys.first) ? args.pop : {}
+
+        [args, extract_options(options)]
+      end
+
+      def extract_options(options)
+        {
+          :match              => options[:match]              || Mongoid::Search.match,
+          :allow_empty_search => options[:allow_empty_search] || Mongoid::Search.allow_empty_search,
+          :relevant_search    => options[:relevant_search]    || Mongoid::Search.relevant_search
+        }
+      end
+
+      def search_without_relevance(query, options)
+        query(Util.normalize_keywords(query), options)
+      end
+
+      def search_relevant(query, options)
+        results_with_relevance(query, options).sort { |o| o['value'] }.map do |r|
+
+          new(r['_id'].merge(:relevance => r['value'])) do |o|
+            # Need to match the actual object
+            o.instance_variable_set('@new_record', false)
+            o._id = r['_id']['_id']
+          end
+
+        end
+      end
+
+      def results_with_relevance(query, options)
+        keywords = Mongoid::Search::Util.normalize_keywords(query)
+
+        map = %Q{
+          function() {
+            var entries = 0;
+            for(i in keywords) {
+              for(j in this._keywords) {
+                if(this._keywords[j] == keywords[i]) {
+                  entries++;
+                }
+              }
+            }
+            if(entries > 0) {
+              emit(this, entries);
+            }
+          }
+        }
+
+        reduce = %Q{
+          function(key, values) {
+            return(values);
+          }
+        }
+
+        query(keywords, options).map_reduce(map, reduce).scope(:keywords => keywords).out(:inline => 1)
       end
     end
 
-    def results_with_relevance(query, options)
-      keywords = Mongoid::Search::Util.normalize_keywords(query)
-
-      map = %Q{
-        function() {
-          var entries = 0;
-          for(i in keywords) {
-            for(j in this._keywords) {
-              if(this._keywords[j] == keywords[i]) {
-                entries++;
-              }
-            }
-          }
-          if(entries > 0) {
-            emit(this, entries);
-          }
-        }
-      }
-
-      reduce = %Q{
-        function(key, values) {
-          return(values);
-        }
-      }
-
-      query(keywords, options).map_reduce(map, reduce).scope(:keywords => keywords).out(:inline => 1)
+    def index_keywords!
+      update_attribute(:_keywords, set_keywords)
     end
-  end
 
-  def index_keywords!
-    update_attribute(:_keywords, set_keywords)
-  end
-
-  private
-  def set_keywords
-    self._keywords = Mongoid::Search::Util.keywords(self, self.search_fields).
-      flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
-  end
+    def set_keywords
+      self._keywords = Mongoid::Search::Util.keywords(self, self.search_fields).
+        flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
+    end
 end
