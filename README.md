@@ -73,6 +73,9 @@ code to search for 'iphone' in products cheaper than $499
 
     @category.products.where(:price.lt => 499).full_text_search('iphone').asc(:price)
 
+To index or reindex all existing records, run this rake task
+
+    $ rake mongoid_search:index
 
 Options
 -------
@@ -165,4 +168,3 @@ Alternatively, you can create an initializer to setup those options:
       # Minimum word size. Words smaller than it won't be indexed
       config.minimum_word_size = 2
     end
-
