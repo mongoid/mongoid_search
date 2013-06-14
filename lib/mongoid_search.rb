@@ -3,6 +3,8 @@
 require 'mongoid_search/railtie' if defined?(Rails)
 require 'mongoid_search/mongoid_search'
 
+Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
+
 module Mongoid::Search
   ## Default matching type. Match :any or :all searched keywords
   mattr_accessor :match
