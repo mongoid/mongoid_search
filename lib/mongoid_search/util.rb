@@ -39,12 +39,11 @@ module Mongoid::Search::Util
     return [] if text.blank?
     text = text.to_s.
       mb_chars.
-      normalize(:kd).
       downcase.
       to_s.
       gsub(punctuation_pattern, ' '). # strip punctuation
-      gsub(/[^\s\p{Alnum}]/,'').   # strip accents
       gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
+      gsub(/a\\\d/, '').
       split(' ').
       reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?

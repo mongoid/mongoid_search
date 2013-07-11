@@ -57,6 +57,7 @@ module Mongoid::Search
 
   # Punctuation pattern to be replaced
   mattr_accessor :punctuation_pattern
+  @@punctuation_pattern = /[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
 
   # Minimum word size. Words smaller than it won't be indexed
   mattr_accessor :minimum_word_size
