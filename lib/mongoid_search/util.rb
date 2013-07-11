@@ -30,10 +30,11 @@ module Mongoid::Search::Util
   end
 
   def self.normalize_keywords(text)
-    ligatures     = Mongoid::Search.ligatures
-    ignore_list   = Mongoid::Search.ignore_list
-    stem_keywords = Mongoid::Search.stem_keywords
-    stem_proc     = Mongoid::Search.stem_proc
+    ligatures           = Mongoid::Search.ligatures
+    punctuation_pattern = Mongoid::Search.punctuation_pattern
+    ignore_list         = Mongoid::Search.ignore_list
+    stem_keywords       = Mongoid::Search.stem_keywords
+    stem_proc           = Mongoid::Search.stem_proc
 
     return [] if text.blank?
     text = text.to_s.
@@ -41,7 +42,7 @@ module Mongoid::Search::Util
       normalize(:kd).
       downcase.
       to_s.
-      gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
+      gsub(punctuation_pattern, ' '). # strip punctuation
       gsub(/[^\s\p{Alnum}]/,'').   # strip accents
       gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
       split(' ').
