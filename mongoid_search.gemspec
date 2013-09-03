@@ -14,8 +14,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
 
   s.add_dependency("mongoid", [">= 3.0.0"])
-  s.add_dependency("fast-stemmer", ["~> 1.0.0"])
-
+  if RUBY_PLATFORM == 'java'
+    s.add_dependency("jruby-stemmer", ["~> 0.0.1"])
+  else
+    s.add_dependency("fast-stemmer", ["~> 1.0.0"])
+  end
   s.add_development_dependency("database_cleaner", [">= 0.8.0"])
   s.add_development_dependency("rake", ["~> 0.8.7"])
   s.add_development_dependency("rspec", ["~> 2.4"])
