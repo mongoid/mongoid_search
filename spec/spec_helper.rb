@@ -5,7 +5,11 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'mongoid'
 require 'database_cleaner'
-require 'fast_stemmer'
+if RUBY_PLATFORM == 'java'
+  require 'jruby-stemmer'
+else
+  require 'fast_stemmer'
+end
 require 'yaml'
 require 'mongoid_search'
 
