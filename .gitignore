@@ -1,6 +1,8 @@
 ## MAC OS
 .DS_Store
 
+Gemfile.lock
+
 ## TEXTMATE
 *.tmproj
 tmtags
