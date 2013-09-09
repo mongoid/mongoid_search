@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = ">= 1.3.6"
 
+  s.platform = "java"
+
   s.add_dependency("mongoid", [">= 3.0.0"])
   s.add_dependency("jruby-stemmer", ["~> 0.0.1"])
   s.add_development_dependency("database_cleaner", [">= 0.8.0"])
