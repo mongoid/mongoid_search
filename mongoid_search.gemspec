@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   
   s.platform = "ruby"
-  s.add_dependency(*["mongoid", ">= 3.0", "< 5.0"])
+  s.add_dependency(*["mongoid", ">= 4.0.0alpha1", "< 5.0"])
   s.add_dependency("fast-stemmer", ["~> 1.0.0"])
   s.add_development_dependency("database_cleaner", [">= 0.8.0"])
   s.add_development_dependency("rake", ["~> 0.8.7"])
