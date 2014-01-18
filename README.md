@@ -78,6 +78,27 @@ To index or reindex all existing records, run this rake task
 
     $ rake mongoid_search:index
 
+Support for dynamic fields
+--------------------------
+The `search_all` directive can be used to indicate that all fields (including `_id`) should be searchable. Since generating the keyword list is done on a `before_save` callback, this makes it ideal for models that heavily use dynamic fields.
+
+    class Article
+      include Mongoid::Document
+      include Mongoid::Search
+      field :title
+
+      search_all
+    end
+
+Although `title` is the only regular field, if we define more when creating an instance, they'll now be indexed:
+
+    a = Article.create :title => "Test", :color => "Red"
+    a.save
+    => true
+    a._keywords
+    => ["52db0b01421aa9d7bc00011e", "red", "test"]
+
+
 Options
 -------
 

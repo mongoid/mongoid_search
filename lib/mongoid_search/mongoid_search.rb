@@ -24,6 +24,10 @@ module Mongoid::Search
       before_save :set_keywords
     end
 
+    def search_all(*options)
+      search_in :___all_fields
+    end
+
     def full_text_search(query, options={})
       options = extract_options(options)
       return (options[:allow_empty_search] ? criteria.all : []) if query.blank?
