@@ -202,7 +202,7 @@ describe Mongoid::Search do
   end
 
   it 'should return the classes that include the search module' do
-    Mongoid::Search.classes.should == [Product, Tag]
+    Mongoid::Search.classes.should == [Article, Product, Tag]
   end
 
   it 'should have a method to index keywords' do
@@ -268,6 +268,21 @@ describe Mongoid::Search do
                             :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
                             :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
       @product._keywords.should include("fahrzeug")
+    end
+  end
+
+  context "dynamic fields" do
+    before do
+      @article = Article.create :title => "Test", :color => "Red"
+    end
+
+    it "should include dynamic fields in _keywords" do
+      @article._keywords.should include("red")
+    end
+
+    it "should include non-dynamic fields in _keywords" do
+      print @article._keywords
+      @article._keywords.should include("test")
     end
   end
 end

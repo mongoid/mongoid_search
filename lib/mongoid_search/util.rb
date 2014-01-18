@@ -16,6 +16,8 @@ module Mongoid::Search::Util
           end
         end
       end
+    elsif fields == :___all_fields
+      klass.attributes.keys.map { |field| self.keywords(klass, field) }
     else
       value = if klass.respond_to?(fields.to_s + "_translations")
                 klass.send(fields.to_s + "_translations").values
