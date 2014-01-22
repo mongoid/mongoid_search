@@ -26,11 +26,12 @@ Examples
       include Mongoid::Search
       field :brand
       field :name
+      field :info, :type => Hash
 
       has_many   :tags
       belongs_to :category
 
-      search_in :brand, :name, :tags => :name, :category => :name
+      search_in :brand, :name, :tags => :name, :category => :name, :info => [:summary, :description]
     end
 
     class Tag
@@ -49,14 +50,14 @@ Examples
 
 Now when you save a product, you get a _keywords field automatically:
 
-    p = Product.new :brand => "Apple", :name => "iPhone"
+    p = Product.new :brand => "Apple", :name => "iPhone", :info => {:summary => "Info-summary", :description => "Info-description"}
     p.tags << Tag.new(:name => "Amazing")
     p.tags << Tag.new(:name => "Awesome")
     p.tags << Tag.new(:name => "Superb")
     p.save
     => true
     p._keywords
-    => ["amazing", "apple", "awesome", "iphone", "superb"]
+    => ["amazing", "apple", "awesome", "iphone", "superb", "Info-summary", "Info-description"]
 
 Now you can run search, which will look in the _keywords field and return all matching results:
 
