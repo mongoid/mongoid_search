@@ -117,7 +117,7 @@ relevant_search:
     Product.full_text_search('amazing apple', relevant_search: true)
     => [#<Product _id: 5016e7d16af54efe1c000001, _type: nil, brand: "Apple", name: "iPhone", attrs: nil, info: nil, category_id: nil, _keywords: ["amazing", "apple", "awesome", "iphone", "superb"], relevance: 2.0>]
 
- Please note that relevant_search will return an Array and not a Criteria object. The search method shoud always be called in the end of the method chain.
+ Please note that relevant_search will return an Array and not a Criteria object. The search method should always be called in the end of the method chain.
 
 Initializer
 -----------
