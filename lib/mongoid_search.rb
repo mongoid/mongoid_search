@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'mongoid_search/railtie' if defined?(Rails)
+require 'mongoid_search/railtie' if defined?(Rails) && defined?(Rails::Railtie)
 require 'mongoid_search/mongoid_search'
 
 Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
