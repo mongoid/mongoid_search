@@ -26,6 +26,8 @@ module Mongoid::Search
 
     def full_text_search(query, options={})
       options = extract_options(options)
+      attr_accessor :relevance if options[:relevant_search].eql? true
+
       return (options[:allow_empty_search] ? criteria.all : []) if query.blank?
 
       if options[:relevant_search]
