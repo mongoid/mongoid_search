@@ -13,3 +13,9 @@ class Product
   search_in :brand, :name, :outlet, :attrs, :tags => :name, :category => [:name, :description],
             :subproducts => [:brand, :name], :info => [ :summary, :description ]
 end
+
+class SubProduct < Product
+  field :sub_product_specific
+
+  search_in :sub_product_specific
+end

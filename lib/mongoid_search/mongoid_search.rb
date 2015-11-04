@@ -2,7 +2,7 @@ module Mongoid::Search
   extend ActiveSupport::Concern
 
   included do
-    cattr_accessor :search_fields
+    class_attribute :search_fields
     @@classes ||= []
     @@classes << self
   end
@@ -15,7 +15,7 @@ module Mongoid::Search
     # Set a field or a number of fields as sources for search
     def search_in(*args)
       args, options = args_and_options(args)
-      self.search_fields = (self.search_fields || []).concat args
+      self.search_fields = (self.search_fields || []).clone.concat args
 
       field :_keywords, :type => Array
 

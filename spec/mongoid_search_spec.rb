@@ -270,4 +270,10 @@ describe Mongoid::Search do
       @product._keywords.should include("fahrzeug")
     end
   end
+
+  context "when inherited" do
+    it "should set search fields on a class basis" do
+      expect(Product.search_fields).not_to include(:sub_product_specific)
+    end
+  end
 end
