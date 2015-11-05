@@ -254,10 +254,10 @@ describe Mongoid::Search do
 
   context "when using deeply nested fields for keywords" do
     context "when explicitly calling set_keywords" do
-        it "should set the _keywords from parent" do
-          @tags.first.send(:set_keywords)
-          @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
-        end
+      it "should set the _keywords from parent" do
+        @tags.first.send(:set_keywords)
+        @tags.first._keywords.should == ["amazing", "description", "info", "iphone", "mobile", "reviews", "summary"]
+      end
     end
   end
 
@@ -268,6 +268,27 @@ describe Mongoid::Search do
                             :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
                             :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
       @product._keywords.should include("fahrzeug")
+    end
+  end
+
+  context "minimum word size" do
+    before(:each) do
+      Mongoid::Search.minimum_word_size = 3
+    end
+
+    after(:each) do
+      Mongoid::Search.minimum_word_size = 2
+    end
+
+    it "should ignore keywords with length less than minimum word size" do
+      @product = Product.create :name => 'a'
+      expect(@product._keywords.size).to eq 0
+
+      @product = Product.create :name => 'ap'
+      expect(@product._keywords.size).to eq 0
+
+      @product = Product.create :name => 'app'
+      expect(@product._keywords.size).to eq 1
     end
   end
 end
