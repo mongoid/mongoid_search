@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://www.papodenerd.net/mongoid-search-full-text-search-for-your-mongoid-models/"
   s.summary = "Search implementation for Mongoid ORM"
   s.description = "Simple full text search implementation."
+  s.license = 'MIT'
 
   s.required_rubygems_version = ">= 1.3.6"
 
