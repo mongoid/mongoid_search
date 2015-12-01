@@ -76,7 +76,7 @@ describe Mongoid::Search do
 
     subject { Product.create :brand => "Apple", :name => "iPhone" }
 
-    its(:_keywords) { should == ["apple", "iphone"] }
+    it(:_keywords) { should == ["apple", "iphone"] }
   end
 
 
