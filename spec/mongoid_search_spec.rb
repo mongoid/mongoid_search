@@ -18,12 +18,12 @@ describe Mongoid::Search do
     Mongoid::Search.ignore_list   = nil
     Mongoid::Search.stem_proc     = @default_proc
     @product = Product.create :brand => "Apple",
-                              :name => "iPhone",
-                              :tags => (@tags = ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) }),
-                              :category => Category.new(:name => "Mobile", :description => "Reviews"),
-                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
-                              :info => { :summary => "Info-summary",
-                                         :description => "Info-description"}
+      :name => "iPhone",
+      :tags => (@tags = ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) }),
+      :category => Category.new(:name => "Mobile", :description => "Reviews"),
+      :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
+      :info => { :summary => "Info-summary",
+                 :description => "Info-description"}
   end
 
   describe "Serialized hash fields" do
@@ -52,10 +52,10 @@ describe Mongoid::Search do
       Mongoid::Search.stem_keywords = false
       Mongoid::Search.ignore_list   = nil
       @product = Product.create :brand => "Эльбрус",
-                                :name => "Процессор",
-                                :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
-                                :category => Category.new(:name => "процессоры"),
-                                :subproducts => []
+        :name => "Процессор",
+        :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+        :category => Category.new(:name => "процессоры"),
+        :subproducts => []
     end
 
     it "should leave utf8 characters" do
@@ -74,9 +74,10 @@ describe Mongoid::Search do
       end
     end
 
-    subject { Product.create :brand => "Apple", :name => "iPhone" }
-
-    its(:_keywords) { should == ["apple", "iphone"] }
+    it 'should validate keywords' do
+      product = Product.create :brand => "Apple", :name => "iPhone" 
+      expect(product._keywords).to eq(["apple", "iphone"])
+    end
   end
 
 
@@ -88,11 +89,11 @@ describe Mongoid::Search do
 
   it "should inherit _keywords field and build upon" do
     variant = Variant.create :brand => "Apple",
-                              :name => "iPhone",
-                              :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
-                              :category => Category.new(:name => "Mobile"),
-                              :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
-                              :color => :white
+      :name => "iPhone",
+      :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
+      :category => Category.new(:name => "Mobile"),
+      :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
+      :color => :white
     variant._keywords.should include 'white'
     Variant.full_text_search(:name => 'Apple', :color => :white).should eq [variant]
   end
@@ -127,15 +128,15 @@ describe Mongoid::Search do
     @product._keywords.sort.should == ["apple", "craddle", "iphone", "mobile", "reviews", "ole", "info", "description", "summary"].sort
   end
 
-   it "should incorporate numbers as keywords" do
-        @product = Product.create :brand => "Ford",
-                              :name => "T 1908",
-                              :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
-                              :category => Category.new(:name => "Vehicle")
+  it "should incorporate numbers as keywords" do
+    @product = Product.create :brand => "Ford",
+      :name => "T 1908",
+      :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
+      :category => Category.new(:name => "Vehicle")
 
-      @product.save!
-      @product._keywords.should == ["1908", "amazing", "car", "first", "ford",  "vehicle"]
-   end
+    @product.save!
+    @product._keywords.should == ["1908", "amazing", "car", "first", "ford",  "vehicle"]
+  end
 
   it "should return results in search" do
     Product.full_text_search("apple").size.should == 1
@@ -264,9 +265,9 @@ describe Mongoid::Search do
   context "when using localized fields" do
     it "should set the keywords from all localizations" do
       @product = Product.create :brand => "Ford",
-                            :name => "T 1908",
-                            :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
-                            :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
+        :name => "T 1908",
+        :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
+        :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
       @product._keywords.should include("fahrzeug")
     end
   end
