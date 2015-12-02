@@ -74,9 +74,10 @@ describe Mongoid::Search do
       end
     end
 
-    subject { Product.create :brand => "Apple", :name => "iPhone" }
-
-    its(:_keywords) { should == ["apple", "iphone"] }
+    it 'should validate keywords' do
+      product = Product.create :brand => "Apple", :name => "iPhone" 
+      expect(product._keywords).to eq(["apple", "iphone"])
+    end
   end
 
 
