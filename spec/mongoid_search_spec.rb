@@ -228,6 +228,55 @@ describe Mongoid::Search do
     end
   end
 
+  context "when regex search is true" do
+   
+    before do
+      Mongoid::Search.regex_search = true
+    end
+
+    after do
+      Mongoid::Search.regex_search = false
+    end
+
+    it "should not return results in search with a partial word if using regex search" do
+      expect(Product.full_text_search("iph").size).to eq 1
+    end
+
+    it "should return results in search with a full word if using regex search" do
+      expect(Product.full_text_search("iphone").size).to eq 1
+    end
+
+    context 'Match partial words on the beginning' do
+    
+      before do
+        Mongoid::Search.regex = Proc.new { |query| /^#{query}/ }
+      end
+
+      it "should return results in search which starts with query string" do
+        expect(Product.full_text_search("iphone").size).to eq 1
+      end
+
+      it "should not return results in search which does not start with query string" do
+        expect(Product.full_text_search("phone").size).to eq 0
+      end
+    end
+
+    context 'Match partial words on the end' do
+      
+      before do
+        Mongoid::Search.regex = Proc.new { |query| /#{query}$/ }
+      end
+    
+      it "should return results in search which ends with query string" do
+        expect(Product.full_text_search("phone").size).to eq 1
+      end
+
+      it "should not return results in search which does not end with query string" do
+        expect(Product.full_text_search("phon").size).to eq 0
+      end
+    end
+  end
+
   context "relevant search" do
     before do
       Mongoid::Search.relevant_search = true
