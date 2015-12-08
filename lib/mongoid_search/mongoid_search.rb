@@ -14,7 +14,7 @@ module Mongoid::Search
   module ClassMethods #:nodoc:
     # Set a field or a number of fields as sources for search
     def search_in(*args)
-      args, options = args_and_options(args)
+      args, _options = args_and_options(args)
       self.search_fields = (self.search_fields || []).concat args
 
       field :_keywords, :type => Array
@@ -64,7 +64,7 @@ module Mongoid::Search
          :allow_empty_search,
          :relevant_search].include?(args.last.keys.first) ? args.pop : {}
 
-        [args, extract_options(options)]
+      [args, extract_options(options)]
     end
 
     def extract_options(options)
