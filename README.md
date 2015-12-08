@@ -159,7 +159,7 @@ Alternatively, you can create an initializer to setup those options:
       config.regex = Proc.new { |query| /#{query}/ }
 
       ## Match partial words on the beginning or in the end (slightly faster)
-      # config.regex = Proc.new { |query| /ˆ#{query}/ }
+      # config.regex = Proc.new { |query| /^#{query}/ }
       # config.regex = Proc.new { |query| /#{query}$/ }
 
       # Ligatures to be replaced

@@ -47,7 +47,7 @@ module Mongoid::Search
   @@regex = Proc.new { |query| /#{query}/ }
 
   ## Match partial words on the beginning or in the end (slightly faster)
-  # @@regex = Proc.new { |query| /ˆ#{query}/ }
+  # @@regex = Proc.new { |query| /^#{query}/ }
   # @@regex = Proc.new { |query| /#{query}$/ }
 
   # Ligatures to be replaced
