@@ -18,56 +18,56 @@ describe Mongoid::Search::Util do
   end
 
   it "should return an empty array if no text is passed" do
-    Mongoid::Search::Util.normalize_keywords("").should == []
+    expect(Mongoid::Search::Util.normalize_keywords("")).to eq []
   end
 
   it "should return an array of keywords" do
-    Mongoid::Search::Util.normalize_keywords("keyword").class.should == Array
+    expect(Mongoid::Search::Util.normalize_keywords("keyword").class).to eq Array
   end
 
   it "should return an array of strings" do
-    Mongoid::Search::Util.normalize_keywords("keyword").first.class.should == String
+    expect(Mongoid::Search::Util.normalize_keywords("keyword").first.class).to eq String
   end
 
   it "should remove accents from the text passed" do
-    Mongoid::Search::Util.normalize_keywords("café").should == ["cafe"]
+    expect(Mongoid::Search::Util.normalize_keywords("café")).to eq ["cafe"]
   end
 
   it "should downcase the text passed" do
-    Mongoid::Search::Util.normalize_keywords("CaFé").should == ["cafe"]
+    expect(Mongoid::Search::Util.normalize_keywords("CaFé")).to eq ["cafe"]
   end
 
   it "should downcase utf-8 chars of the text passed" do
-    Mongoid::Search::Util.normalize_keywords("Кафе").should == ["кафе"]
+    expect(Mongoid::Search::Util.normalize_keywords("Кафе")).to eq ["кафе"]
   end
 
   it "should split whitespaces, hifens, dots, underlines, etc.." do
-    Mongoid::Search::Util.normalize_keywords("CaFé-express.com delicious;come visit, and 'win' an \"iPad\"").should == ["cafe", "express", "com", "delicious", "come", "visit", "and", "win", "an", "ipad"]
+    expect(Mongoid::Search::Util.normalize_keywords("CaFé-express.com delicious;come visit, and 'win' an \"iPad\"")).to eq ["cafe", "express", "com", "delicious", "come", "visit", "and", "win", "an", "ipad"]
   end
 
   it "should stem keywords" do
     Mongoid::Search.stem_keywords = true
-    Mongoid::Search::Util.normalize_keywords("A runner running and eating").should == ["runner", "run", "and", "eat"]
+    expect(Mongoid::Search::Util.normalize_keywords("A runner running and eating")).to eq ["runner", "run", "and", "eat"]
   end
 
   it "should stem keywords using a custom proc" do
     Mongoid::Search.stem_keywords = true
     Mongoid::Search.stem_proc = lambda { |word| word.upcase }
 
-    Mongoid::Search::Util.normalize_keywords("A runner running and eating").should == ["RUNNER", "RUNNING", "AND", "EATING"]
+    expect(Mongoid::Search::Util.normalize_keywords("A runner running and eating")).to eq ["RUNNER", "RUNNING", "AND", "EATING"]
   end
 
   it "should ignore keywords from ignore list" do
     Mongoid::Search.stem_keywords = true
     Mongoid::Search.ignore_list = YAML.load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))["ignorelist"]
-    Mongoid::Search::Util.normalize_keywords("An amazing awesome runner running and eating").should == ["an", "runner", "run", "and", "eat"]
+    expect(Mongoid::Search::Util.normalize_keywords("An amazing awesome runner running and eating")).to eq ["an", "runner", "run", "and", "eat"]
   end
 
   it "should ignore keywords with less than two words" do
-    Mongoid::Search::Util.normalize_keywords("A runner running").should_not include "a"
+    expect(Mongoid::Search::Util.normalize_keywords("A runner running")).not_to include "a"
   end
 
   it "should not ignore numbers" do
-    Mongoid::Search::Util.normalize_keywords("Ford T 1908").should include "1908"
+    expect(Mongoid::Search::Util.normalize_keywords("Ford T 1908")).to include "1908"
   end
 end
