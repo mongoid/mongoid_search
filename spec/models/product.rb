@@ -1,6 +1,8 @@
 class Product
   include Mongoid::Document
   include Mongoid::Search
+  include Mongoid::Attributes::Dynamic if ::Mongoid::VERSION >= '4'
+
   field :brand
   field :name
   field :attrs, :type => Array

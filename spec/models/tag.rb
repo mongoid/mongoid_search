@@ -1,6 +1,7 @@
 class Tag
   include Mongoid::Document
   include Mongoid::Search
+  include Mongoid::Attributes::Dynamic if ::Mongoid::VERSION >= '4'
 
   field :name
 
