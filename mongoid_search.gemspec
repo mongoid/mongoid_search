@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |s|
   s.name = "mongoid_search"
-  s.version = "0.3.2"
+  s.version = "0.3.3"
   s.authors = ["Mauricio Zaffari"]
   s.email =["mauricio@papodenerd.net"]
   s.homepage = "http://www.papodenerd.net/mongoid-search-full-text-search-for-your-mongoid-models/"
@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
 
   s.required_rubygems_version = ">= 1.3.6"
-  
+
   s.platform = "ruby"
-  
+
   s.add_dependency("mongoid", [">= 3.0.0"])
   s.add_dependency("fast-stemmer", ["~> 1.0.0"])
   s.add_development_dependency("database_cleaner", [">= 0.8.0"])
