@@ -69,14 +69,16 @@ describe Mongoid::Search do
 
   context "when references are nil" do
     context "when instance is being created" do
-      it "should not complain about method missing" do
-        expect { Product.create! }.not_to raise_error
+      if Mongoid::VERSION < '5.0.0'
+        it "should not complain about method missing" do
+          expect { Product.create! }.not_to raise_error
+        end
       end
     end
 
     it 'should validate keywords' do
-      product = Product.create :brand => "Apple", :name => "iPhone" 
-      expect(product._keywords).to eq(["apple", "iphone"])
+      product = Product.create :brand => "Apple", :name => "iPhone", category: Category.create(name: 'New Category') 
+      expect(product._keywords & ['apple', 'iphone']).to eq(["apple", "iphone"])
     end
   end
 
@@ -100,13 +102,16 @@ describe Mongoid::Search do
 
   it "should expand the ligature to ease searching" do
     # ref: http://en.wikipedia.org/wiki/Typographic_ligature, only for french right now. Rules for other languages are not know
-    variant1 = Variant.create :tags => ["œuvre"].map {|tag| Tag.new(:name => tag)}
-    variant2 = Variant.create :tags => ["æquo"].map {|tag| Tag.new(:name => tag)}
+    variant1 = Variant.create :tags => ["œuvre"].map {|tag| Tag.new(:name => tag)}, 
+                              category: Category.create(name: 'New Category')
 
-    expect(Variant.full_text_search("œuvre")).to eq [variant1]
-    expect(Variant.full_text_search("oeuvre")).to eq [variant1]
-    expect(Variant.full_text_search("æquo")).to eq [variant2]
-    expect(Variant.full_text_search("aequo")).to eq [variant2]
+    variant2 = Variant.create :tags => ["æquo"].map {|tag| Tag.new(:name => tag)},
+                              category: Category.create(name: 'New Category')
+
+    expect(Variant.full_text_search("œuvre").to_a).to match_array [variant1]
+    expect(Variant.full_text_search("oeuvre").to_a).to match_array [variant1]
+    expect(Variant.full_text_search("æquo").to_a).to match_array [variant2]
+    expect(Variant.full_text_search("aequo").to_a).to match_array [variant2]
   end
 
   it "should set the _keywords field with stemmed words if stem is enabled" do
@@ -280,7 +285,7 @@ describe Mongoid::Search do
   context "relevant search" do
     before do
       Mongoid::Search.relevant_search = true
-      @imac = Product.create :name => 'apple imac'
+      @imac = Product.create :name => 'apple imac', category: Category.create(name: 'New Category')
     end
 
     it "should return results ordered by relevance and with correct ids" do
@@ -331,14 +336,14 @@ describe Mongoid::Search do
     end
 
     it "should ignore keywords with length less than minimum word size" do
-      @product = Product.create :name => 'a'
-      expect(@product._keywords.size).to eq 0
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'a')
+      expect(@product._keywords.include?('a')).to eq(false) 
 
-      @product = Product.create :name => 'ap'
-      expect(@product._keywords.size).to eq 0
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'ap')
+      expect(@product._keywords.include?('ap')).to eq(false)
 
-      @product = Product.create :name => 'app'
-      expect(@product._keywords.size).to eq 1
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'aap')
+      expect(@product._keywords.include?('aap')).to eq(true)
     end
   end
 end

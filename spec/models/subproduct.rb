@@ -5,5 +5,5 @@ class Subproduct
   field :brand
   field :name
 
-  belongs_to :product, :inverse_of => :subproducts
+  embedded_in :product, :inverse_of => :subproducts
 end
