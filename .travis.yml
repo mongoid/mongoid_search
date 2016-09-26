@@ -2,6 +2,7 @@ language: ruby
 rvm:
   - 2.3.0
   - 2.2.3
+  - 2.1.0
   - 1.9.3
   - jruby-19mode # JRuby in 1.9 mode
   - rbx-2.1.1
@@ -10,3 +11,23 @@ env:
   - MONGOID_VERSION=4                                                                                         
   - MONGOID_VERSION=5
   - MONGOID_VERSION=6
+  - MONGOID_VERSION=HEAD
+
+matrix:                                                                                                       
+  exclude:                                                                                                    
+    - rvm: 1.9.3                                                                                              
+      env: MONGOID_VERSION=6                                                                                  
+    - rvm: 2.0.0                                                                                              
+      env: MONGOID_VERSION=6                                                                                  
+    - rvm: 2.1.0                                                                                              
+      env: MONGOID_VERSION=6  
+    - rvm: 2.2.3                                                                                              
+      env: MONGOID_VERSION=6  
+    - rvm: 1.9.3                                                                                              
+      env: MONGOID_VERSION=HEAD                                                                                  
+    - rvm: 2.0.0                                                                                              
+      env: MONGOID_VERSION=HEAD                                                                                  
+    - rvm: 2.1.0                                                                                              
+      env: MONGOID_VERSION=HEAD  
+    - rvm: 2.2.3                                                                                              
+      env: MONGOID_VERSION=HEAD  
