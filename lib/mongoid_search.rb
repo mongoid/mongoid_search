@@ -60,6 +60,14 @@ module Mongoid::Search
   mattr_accessor :minimum_word_size
   @@minimum_word_size = 2
 
+  # Strip special symbols
+  mattr_accessor :strip_symbols
+  @@strip_symbols = /[._:;'\"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
+
+  # Strip accents
+  mattr_accessor :strip_accents
+  @@strip_accents = /[^\s\p{Alnum}]/
+
   def self.setup
     yield self
   end
