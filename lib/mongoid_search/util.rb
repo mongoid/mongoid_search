@@ -30,20 +30,20 @@ module Mongoid::Search::Util
   end
 
   def self.normalize_keywords(text)
-    ligatures     = Mongoid::Search.ligatures
-    ignore_list   = Mongoid::Search.ignore_list
-    stem_keywords = Mongoid::Search.stem_keywords
-    stem_proc     = Mongoid::Search.stem_proc
+    ligatures           = Mongoid::Search.ligatures
+    punctuation_pattern = Mongoid::Search.punctuation_pattern
+    ignore_list         = Mongoid::Search.ignore_list
+    stem_keywords       = Mongoid::Search.stem_keywords
+    stem_proc           = Mongoid::Search.stem_proc
 
     return [] if text.blank?
     text = text.to_s.
       mb_chars.
-      normalize(:kd).
       downcase.
       to_s.
-      gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
-      gsub(/[^\s\p{Alnum}]/,'').   # strip accents
+      gsub(punctuation_pattern, ' '). # strip punctuation
       gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
+      gsub(/a\\\d/, '').
       split(' ').
       reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
