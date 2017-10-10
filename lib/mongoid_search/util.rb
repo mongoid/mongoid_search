@@ -50,7 +50,6 @@ module Mongoid::Search::Util
       reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
     text = text.map(&stem_proc) if stem_keywords
-    binding.pry
     text
   end
 end
