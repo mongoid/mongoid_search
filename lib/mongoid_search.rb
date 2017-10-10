@@ -27,6 +27,12 @@ module Mongoid::Search
   mattr_accessor :stem_proc
   @@stem_proc = Proc.new { |word| word.stem }
 
+  # before the text is altered we can trim some characters
+  # it allows us to avoid replacing punctuations such as '-' to ' '
+  # which would not be beneficial in cases like date matching (`2017-10-08`)
+  mattr_accessor :trim_characters
+  @@trim_characters = []
+
   ## Words to ignore
   mattr_accessor :ignore_list
   @@ignore_list = []
