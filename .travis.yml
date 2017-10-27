@@ -5,8 +5,12 @@ rvm:
   - 1.9.3
   - jruby-19mode # JRuby in 1.9 mode
   - rbx-2.1.1
-env:                                                                                                          
-  - MONGOID_VERSION=3                                                                                         
-  - MONGOID_VERSION=4                                                                                         
+
+services:
+  - mongodb
+
+env:
+  - MONGOID_VERSION=3
+  - MONGOID_VERSION=4
   - MONGOID_VERSION=5
   - MONGOID_VERSION=6
