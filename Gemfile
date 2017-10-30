@@ -1,23 +1,23 @@
 source 'http://rubygems.org'
 
-platforms :ruby do
-  gemspec :name => "mongoid_search"
-end
-
-platforms :jruby do
-  gemspec :name => "mongoid_search-java"
-end
+gemspec
 
 gem 'simplecov', '>= 0.4.0', :require => false, :group => :test
-case version = ENV['MONGOID_VERSION'] || '~> 6.0.0.beta'                                                             
-when /6/
-  gem 'mongoid', '~> 6.0.0.beta'                                                                                     
-when /5/                                                                                                      
-  gem 'mongoid', '~> 5.0'                                                                                     
-when /4/                                                                                                      
-  gem 'mongoid', '~> 4.0'                                                                                     
-when /3/                                                                                                      
-  gem 'mongoid', '~> 3.1'                                                                                     
-else                                                                                                          
-  gem 'mongoid', version                                                                                      
-end
+
+mongoid_version =
+  case ENV['MONGOID_VERSION']
+  # TODO: uncomment this option when all specs pass for 6.0
+  # when /^6/
+    # '~> 6.0'
+  when /^5/
+    '~> 5.0'
+  when /^4/
+    '~> 4.0'
+  when /^3/
+    '~> 3.1'
+  else
+    # TODO: change default value to '~> 6.0' when all specs pass for 6.0
+    '~> 5.0'
+  end
+
+gem 'mongoid', mongoid_version
