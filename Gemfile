@@ -1,12 +1,6 @@
 source 'http://rubygems.org'
 
-platforms :ruby do
-  gemspec :name => "mongoid_search"
-end
-
-platforms :jruby do
-  gemspec :name => "mongoid_search-java"
-end
+gemspec
 
 gem 'simplecov', '>= 0.4.0', :require => false, :group => :test
 case version = ENV['MONGOID_VERSION'] || '~> 6.0.0'                                                             

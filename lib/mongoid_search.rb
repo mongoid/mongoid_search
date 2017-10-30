@@ -1,9 +1,10 @@
 # encoding: utf-8
 
-require 'mongoid_search/railtie' if defined?(Rails) && defined?(Rails::Railtie)
 require 'mongoid_search/mongoid_search'
 
-Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
+if defined?(Rails)
+  require 'mongoid_search/railtie'
+end
 
 module Mongoid::Search
   ## Default matching type. Match :any or :all searched keywords
@@ -58,6 +59,14 @@ module Mongoid::Search
   # Minimum word size. Words smaller than it won't be indexed
   mattr_accessor :minimum_word_size
   @@minimum_word_size = 2
+
+  # Strip special symbols
+  mattr_accessor :strip_symbols
+  @@strip_symbols = /[._:;'\"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
+
+  # Strip accents
+  mattr_accessor :strip_accents
+  @@strip_accents = /[^\s\p{Alnum}]/
 
   def self.setup
     yield self
