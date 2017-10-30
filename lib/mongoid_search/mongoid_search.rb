@@ -126,6 +126,6 @@ module Mongoid::Search
 
   def set_keywords
     self._keywords = Mongoid::Search::Util.keywords(self, self.search_fields).
-      flatten.reject{|k| k.nil? || k.empty?}.uniq.sort.push(*self.search_fields.map(&:to_s))
+      flatten.reject{|k| k.nil? || k.empty?}.uniq.sort
   end
 end
