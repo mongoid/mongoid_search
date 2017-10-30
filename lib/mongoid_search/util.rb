@@ -34,6 +34,7 @@ module Mongoid::Search::Util
     ignore_list   = Mongoid::Search.ignore_list
     stem_keywords = Mongoid::Search.stem_keywords
     stem_proc     = Mongoid::Search.stem_proc
+    trim_characters = Mongoid::Search.trim_characters
 
     return [] if text.blank?
     text = text.to_s.
@@ -41,6 +42,7 @@ module Mongoid::Search::Util
       normalize(:kd).
       downcase.
       to_s.
+      gsub(/[#{trim_characters.join("")}]/, '').
       gsub(/[._:;'"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/, ' '). # strip punctuation
       gsub(/[^\s\p{Alnum}]/,'').   # strip accents
       gsub(/[#{ligatures.keys.join("")}]/) {|c| ligatures[c]}.
@@ -50,5 +52,4 @@ module Mongoid::Search::Util
     text = text.map(&stem_proc) if stem_keywords
     text
   end
-
 end
