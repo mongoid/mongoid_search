@@ -19,11 +19,11 @@ describe Mongoid::Search do
     Mongoid::Search.stem_proc     = @default_proc
     @product = Product.create :brand => "Apple",
       :name => "iPhone",
-      :tags => (@tags = ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) }),
       :category => Category.new(:name => "Mobile", :description => "Reviews"),
       :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
       :info => { :summary => "Info-summary",
                  :description => "Info-description"}
+      @tags = ["Amazing", "Awesome", "Olé"].map { |tag| Tag.create(:name => tag, product: @product) }
   end
 
   describe "Serialized hash fields" do
@@ -53,9 +53,10 @@ describe Mongoid::Search do
       Mongoid::Search.ignore_list   = nil
       @product = Product.create :brand => "Эльбрус",
         :name => "Процессор",
-        :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
         :category => Category.new(:name => "процессоры"),
         :subproducts => []
+
+     ["Amazing", "Awesome", "Olé"].map { |tag| Tag.create(:name => tag, product: @product) }
     end
 
     it "should leave utf8 characters" do
@@ -69,17 +70,18 @@ describe Mongoid::Search do
 
   context "when references are nil" do
     context "when instance is being created" do
-      it "should not complain about method missing" do
-        expect { Product.create! }.not_to raise_error
+      if Mongoid::VERSION < '5.0.0'
+        it "should not complain about method missing" do
+          expect { Product.create! }.not_to raise_error
+        end
       end
     end
 
     it 'should validate keywords' do
-      product = Product.create :brand => "Apple", :name => "iPhone" 
-      expect(product._keywords).to eq(["apple", "iphone"])
+      product = Product.create :brand => "Apple", :name => "iPhone", category: Category.create(name: 'New Category') 
+      expect(product._keywords & ['apple', 'iphone']).to eq(["apple", "iphone"])
     end
   end
-
 
   it "should set the _keywords field for array fields also" do
     @product.attrs = ['lightweight', 'plastic', :red]
@@ -90,23 +92,30 @@ describe Mongoid::Search do
   it "should inherit _keywords field and build upon" do
     variant = Variant.create :brand => "Apple",
       :name => "iPhone",
-      :tags => ["Amazing", "Awesome", "Olé"].map { |tag| Tag.new(:name => tag) },
       :category => Category.new(:name => "Mobile"),
       :subproducts => [Subproduct.new(:brand => "Apple", :name => "Craddle")],
       :color => :white
+
+    ["Amazing", "Awesome", "Olé"].map { |tag| Tag.create(:name => tag, variant: variant) }
     expect(variant._keywords).to include 'white'
     expect(Variant.full_text_search(:name => 'Apple', :color => :white)).to eq [variant]
   end
 
   it "should expand the ligature to ease searching" do
-    # ref: http://en.wikipedia.org/wiki/Typographic_ligature, only for french right now. Rules for other languages are not know
-    variant1 = Variant.create :tags => ["œuvre"].map {|tag| Tag.new(:name => tag)}
-    variant2 = Variant.create :tags => ["æquo"].map {|tag| Tag.new(:name => tag)}
+    # ref: http://en.wikipedia.org/wiki/Typographic_ligature, only for french right now. 
+    # Rules for other languages are not know
 
-    expect(Variant.full_text_search("œuvre")).to eq [variant1]
-    expect(Variant.full_text_search("oeuvre")).to eq [variant1]
-    expect(Variant.full_text_search("æquo")).to eq [variant2]
-    expect(Variant.full_text_search("aequo")).to eq [variant2]
+    variant1 = Variant.create! category: Category.create(name: 'New Category')
+
+    ["œuvre"].map { |tag| Tag.create(:name => tag, variant: variant1) } 
+
+    variant2 = Variant.create category: Category.create(name: 'New Category')
+    ["æquo"].map { |tag| Tag.create(:name => tag, variant: variant2) }
+
+    expect(Variant.full_text_search("œuvre").to_a).to match_array [variant1]
+    expect(Variant.full_text_search("oeuvre").to_a).to match_array [variant1]
+    expect(Variant.full_text_search("æquo").to_a).to match_array [variant2]
+    expect(Variant.full_text_search("aequo").to_a).to match_array [variant2]
   end
 
   it "should set the _keywords field with stemmed words if stem is enabled" do
@@ -131,70 +140,70 @@ describe Mongoid::Search do
   it "should incorporate numbers as keywords" do
     @product = Product.create :brand => "Ford",
       :name => "T 1908",
-      :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
       :category => Category.new(:name => "Vehicle")
+    ["Amazing", "First", "Car"].map { |tag| Tag.create(:name => tag, product: @product) }
 
     @product.save!
     expect(@product._keywords).to eq ["1908", "amazing", "car", "first", "ford",  "vehicle"]
   end
 
   it "should return results in search" do
-   expect(Product.full_text_search("apple").size).to eq 1
+    expect(Product.full_text_search("apple").size).to eq 1
   end
 
   it "should return results in search for dynamic attribute" do
     @product[:outlet] = "online shop"
     @product.save!
-   expect(Product.full_text_search("online").size).to eq 1
+    expect(Product.full_text_search("online").size).to eq 1
   end
 
   it "should return results in search even searching a accented word" do
-   expect(Product.full_text_search("Ole").size).to eq 1
-   expect(Product.full_text_search("Olé").size).to eq 1
+    expect(Product.full_text_search("Ole").size).to eq 1
+    expect(Product.full_text_search("Olé").size).to eq 1
   end
 
   it "should return results in search even if the case doesn't match" do
-   expect(Product.full_text_search("oLe").size).to eq 1
+    expect(Product.full_text_search("oLe").size).to eq 1
   end
 
   it "should return results in search with a partial word by default" do
-   expect(Product.full_text_search("iph").size).to eq 1
+    expect(Product.full_text_search("iph").size).to eq 1
   end
 
   it "should return results for any matching word with default search" do
-   expect(Product.full_text_search("apple motorola").size).to eq 1
+    expect(Product.full_text_search("apple motorola").size).to eq 1
   end
 
   it "should not return results when all words do not match, if using :match => :all" do
     Mongoid::Search.match = :all
-   expect(Product.full_text_search("apple motorola").size).to eq 0
+    expect(Product.full_text_search("apple motorola").size).to eq 0
   end
 
   it "should return results for any matching word, using :match => :all, passing :match => :any to .full_text_search" do
     Mongoid::Search.match = :all
-   expect(Product.full_text_search("apple motorola", :match => :any).size).to eq 1
+    expect(Product.full_text_search("apple motorola", :match => :any).size).to eq 1
   end
 
   it "should not return results when all words do not match, passing :match => :all to .full_text_search" do
-   expect(Product.full_text_search("apple motorola", :match => :all).size).to eq 0
+    expect(Product.full_text_search("apple motorola", :match => :all).size).to eq 0
   end
 
   it "should return no results when a blank search is made" do
     Mongoid::Search.allow_empty_search = false
-   expect(Product.full_text_search("").size).to eq 0
+    expect(Product.full_text_search("").size).to eq 0
   end
 
   it "should return results when a blank search is made when :allow_empty_search is true" do
     Mongoid::Search.allow_empty_search = true
-   expect(Product.full_text_search("").size).to eq 1
+    expect(Product.full_text_search("").size).to eq 1
   end
 
   it "should search for embedded documents" do
-   expect(Product.full_text_search("craddle").size).to eq 1
+    expect(Product.full_text_search("craddle").size).to eq 1
   end
 
   it "should search for reference documents" do
-   expect(Product.full_text_search("reviews").size).to eq 1
+    expect(Product.full_text_search("reviews").size).to eq 1
   end
 
   it 'should work in a chainable fashion' do
@@ -280,7 +289,8 @@ describe Mongoid::Search do
   context "relevant search" do
     before do
       Mongoid::Search.relevant_search = true
-      @imac = Product.create :name => 'apple imac'
+      category = Category.create(name: 'New Category')
+      @imac = Product.create :name => 'apple imac', category: category 
     end
 
     it "should return results ordered by relevance and with correct ids" do
@@ -315,8 +325,9 @@ describe Mongoid::Search do
     it "should set the keywords from all localizations" do
       @product = Product.create :brand => "Ford",
         :name => "T 1908",
-        :tags => ["Amazing", "First", "Car"].map { |tag| Tag.new(:name => tag) },
         :category => Category.new(:name_translations => { :en => "Vehicle", :de => "Fahrzeug" })
+
+      ["Amazing", "First", "Car"].map { |tag| Tag.create(:name => tag, product: @product) }
       expect(@product._keywords).to include("fahrzeug")
     end
   end
@@ -331,14 +342,14 @@ describe Mongoid::Search do
     end
 
     it "should ignore keywords with length less than minimum word size" do
-      @product = Product.create :name => 'a'
-      expect(@product._keywords.size).to eq 0
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'a')
+      expect(@product._keywords.include?('a')).to eq(false) 
 
-      @product = Product.create :name => 'ap'
-      expect(@product._keywords.size).to eq 0
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'ap')
+      expect(@product._keywords.include?('ap')).to eq(false)
 
-      @product = Product.create :name => 'app'
-      expect(@product._keywords.size).to eq 1
+      @product = Product.create(category: Category.create(name: 'New Category'), :name => 'aap')
+      expect(@product._keywords.include?('aap')).to eq(true)
     end
   end
 end
