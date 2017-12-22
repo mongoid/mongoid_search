@@ -26,12 +26,12 @@ class Product
   include Mongoid::Search
   field :brand
   field :name
-  field :info, :type => Hash
+  field :info, type: Hash
 
   has_many   :tags
   belongs_to :category
 
-  search_in :brand, :name, :tags => :name, :category => :name, :info => [:summary, :description]
+  search_in :brand, :name, tags: :name, category: :name, info: %i[summary description]
 end
 
 class Tag
@@ -52,10 +52,10 @@ end
 Now when you save a product, you get a `_keywords` field automatically:
 
 ```ruby
-p = Product.new :brand => "Apple", :name => "iPhone", :info => {:summary => "Info-summary", :description => "Info-description"}
-p.tags << Tag.new(:name => "Amazing")
-p.tags << Tag.new(:name => "Awesome")
-p.tags << Tag.new(:name => "Superb")
+p = Product.new brand: 'Apple', name: 'iPhone', info: { summary: 'Info-summary', description: 'Info-description' }
+p.tags << Tag.new(name: 'Amazing')
+p.tags << Tag.new(name: 'Awesome')
+p.tags << Tag.new(name: 'Superb')
 p.save
 # => true
 p._keywords
@@ -72,54 +72,55 @@ Product.full_text_search("apple iphone").size
 Note that the search is case insensitive, and accept partial searching too:
 
 ```ruby
-Product.full_text_search("ipho").size
+Product.full_text_search('ipho').size
 # => 1
 ```
 
-Assuming you have a category with multiple products you can use the following
-code to search for 'iphone' in products cheaper than $499
+Assuming you have a category with multiple products you can use the following code to search for 'iphone' in products cheaper than $499.
 
 ```ruby
-@category.products.where(:price.lt => 499).full_text_search('iphone').asc(:price)
+category.products.where(:price.lt => 499).full_text_search('iphone').asc(:price)
 ```
 
 To index or reindex all existing records, run this rake task
 
-    $ rake mongoid_search:index
+```
+$ rake mongoid_search:index
+```
 
 ## Options
 
 ### match
 
 * `:any` - match any occurrence
-* `:all` - match all ocurrences
+* `:all` - match all occurrences
 
 Default is `:any`.
 
 ```ruby
-Product.full_text_search("apple motorola", match: :any).size
+Product.full_text_search('apple motorola', match: :any).size
 # => 1
 
-Product.full_text_search("apple motorola", match: :all).size
+Product.full_text_search('apple motorola', match: :all).size
 # => 0
 ```
 
 ### allow\_empty\_search
 
-* `true` - will return Model.all
-* `false` - will return []
+* `true` - will return `Model.all`
+* `false` - will return `[]`
 
 Default is `false`.
 
 ```ruby
-Product.full_text_search("", allow_empty_search: true).size
+Product.full_text_search('', allow_empty_search: true).size
 # => 1
 ```
 
 ### relevant_search
 
-* `true` - Adds relevance information to the results
-* `false` - No relevance information
+* `true` - adds relevance information to the results
+* `false` - no relevance information
 
 Default is `false`.
 
