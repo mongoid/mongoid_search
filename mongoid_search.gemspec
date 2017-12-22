@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("database_cleaner", [">= 0.8.0"])
   s.add_development_dependency("rake", ["< 11.0"])
   s.add_development_dependency("rspec", ["~> 2.4"])
+  s.add_development_dependency("mongoid-compatibility")
 
   s.require_path = "lib"
   s.files = Dir["lib/**/*", "tasks/*.rake"] + %w(LICENSE README.md Rakefile VERSION)

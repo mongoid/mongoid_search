@@ -8,6 +8,7 @@ require 'database_cleaner'
 require 'fast_stemmer'
 require 'yaml'
 require 'mongoid_search'
+require 'mongoid-compatibility'
 
 Mongoid.configure do |config|
   config.connect_to "mongoid_search_test"
@@ -19,6 +20,8 @@ DatabaseCleaner.orm = :mongoid
 
 RSpec.configure do |config|
   config.before(:all) do
+    Mongoid.logger.level = Logger::INFO
+    Mongo::Logger.logger.level = Logger::INFO if Mongoid::Compatibility::Version.mongoid5_or_newer?
     DatabaseCleaner.strategy = :truncation
   end
 

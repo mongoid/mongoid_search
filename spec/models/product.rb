@@ -9,7 +9,11 @@ class Product
   field :info, :type => Hash
 
   has_many    :tags
-  belongs_to  :category
+  if Mongoid::Compatibility::Version.mongoid6_or_newer?
+    belongs_to  :category, required: false
+  else
+    belongs_to  :category
+  end
   embeds_many :subproducts
 
   search_in :brand, :name, :outlet, :attrs, :tags => :name, :category => [:name, :description],
