@@ -5,10 +5,10 @@ class Product
 
   field :brand
   field :name
-  field :attrs, :type => Array
-  field :info, :type => Hash
+  field :attrs, type: Array
+  field :info, type: Hash
 
-  has_many    :tags
+  has_many :tags
   if Mongoid::Compatibility::Version.mongoid6_or_newer?
     belongs_to  :category, required: false
   else
@@ -16,6 +16,6 @@ class Product
   end
   embeds_many :subproducts
 
-  search_in :brand, :name, :outlet, :attrs, :tags => :name, :category => [:name, :description],
-            :subproducts => [:brand, :name], :info => [ :summary, :description ]
+  search_in :brand, :name, :outlet, :attrs, tags: :name, category: %i[name description],
+                                            subproducts: %i[brand name], info: %i[summary description]
 end

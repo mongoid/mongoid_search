@@ -1,6 +1,6 @@
 namespace :mongoid_search do
   desc 'Goes through all documents with search enabled and indexes the keywords.'
-  task :index => :environment do
+  task index: :environment do
     ::Rails.application.eager_load!
     if Mongoid::Search.classes.blank?
       Mongoid::Search::Log.log "No model to index keywords.\n"

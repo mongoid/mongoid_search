@@ -11,7 +11,7 @@ require 'mongoid_search'
 require 'mongoid-compatibility'
 
 Mongoid.configure do |config|
-  config.connect_to "mongoid_search_test"
+  config.connect_to 'mongoid_search_test'
 end
 
 Dir["#{File.dirname(__FILE__)}/models/*.rb"].each { |file| require file }

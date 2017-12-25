@@ -14,6 +14,7 @@ class Mongoid::Search::Log
   end
 
   private
+
   def self.colorize(text, code)
     "\033[#{code}m#{text}\033[0m"
   end
