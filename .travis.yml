@@ -1,20 +1,29 @@
 language: ruby
-rvm:
-  - 2.3.0
-  - 2.2.3
-  - 1.9.3
-  # TODO: uncomment after resolving stemmer dependency for JRuby
-  # - jruby-19mode # JRuby in 1.9 mode
-  # TODO: uncomment when Rubinius support is working
-  # - rbx-2.1.1
 
 services:
   - mongodb
 
-env:
-  - MONGOID_VERSION=3
-  - MONGOID_VERSION=4
-  - MONGOID_VERSION=5
-  # TODO: investigate the reasons of 6 spec fails with Mongoid 6,
-  # mongoid_search can work wrong for this version
-  # - MONGOID_VERSION=6
+matrix:
+  include:
+    - rvm: 2.4.1
+      env:
+        - MONGOID_VERSION=7
+    - rvm: 2.4.1
+      env:
+        - MONGOID_VERSION=6
+    - rvm: 2.3.1
+      env:
+        - MONGOID_VERSION=6
+    - rvm: 2.3.1
+      env:
+        - MONGOID_VERSION=5
+    - rvm: 2.3.1
+      env:
+        - MONGOID_VERSION=4
+    - rvm: 2.3.1
+      env:
+        - MONGOID_VERSION=3
+    - rvm: 2.3.1
+      env:
+        - MONGOID_VERSION=HEAD
+    - rvm: 2.3.0

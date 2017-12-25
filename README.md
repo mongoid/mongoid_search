@@ -1,8 +1,10 @@
 # Mongoid Search
 
-Mongoid Search is a simple full text search implementation for Mongoid ORM. It performs well for small data sets. If your searchable model is big (i.e. 1.000.000+ records), solr or sphinx may suit you better.
+Mongoid Search is a simple full text search implementation for Mongoid ORM. It supports Mongoid 3, 4, 5 and 6 and performs well for small data sets. If your searchable model is big (i.e. 1.000.000+ records), [mongoid_fulltext](https://github.com/mongoid/mongoid_fulltext), ElasticSearch, Solr or Sphinx may suit you better.
 
-##Installation
+[![Build Status](https://travis-ci.org/mongoid/mongoid_search.svg?branch=master)](https://travis-ci.org/mongoid/mongoid_search)
+
+## Installation
 
 In your Gemfile:
 
@@ -10,15 +12,11 @@ In your Gemfile:
 gem 'mongoid_search'
 ```
 
-If your project is still using mongoid 2.x.x, stick to mongoid_search 0.2.x:
-
-```ruby
-gem 'mongoid_search', '~> 0.2.8'
-```
-
 Then:
 
-    bundle install
+```
+bundle install
+```
 
 ## Examples
 

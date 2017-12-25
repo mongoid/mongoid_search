@@ -75,7 +75,7 @@ describe Mongoid::Search do
     end
 
     it 'should validate keywords' do
-      product = Product.create :brand => "Apple", :name => "iPhone" 
+      product = Product.create :brand => "Apple", :name => "iPhone"
       expect(product._keywords).to eq(["apple", "iphone"])
     end
   end
@@ -203,7 +203,7 @@ describe Mongoid::Search do
   end
 
   it 'should return the classes that include the search module' do
-    expect(Mongoid::Search.classes).to eq [Product, Tag]
+    expect(Mongoid::Search.classes.sort_by(&:name)).to eq [Product, Tag]
   end
 
   it 'should have a method to index keywords' do
@@ -229,7 +229,7 @@ describe Mongoid::Search do
   end
 
   context "when regex search is true" do
-   
+
     before do
       Mongoid::Search.regex_search = true
     end
@@ -247,7 +247,7 @@ describe Mongoid::Search do
     end
 
     context 'Match partial words on the beginning' do
-    
+
       before do
         Mongoid::Search.regex = Proc.new { |query| /^#{query}/ }
       end
@@ -262,11 +262,11 @@ describe Mongoid::Search do
     end
 
     context 'Match partial words on the end' do
-      
+
       before do
         Mongoid::Search.regex = Proc.new { |query| /#{query}$/ }
       end
-    
+
       it "should return results in search which ends with query string" do
         expect(Product.full_text_search("phone").size).to eq 1
       end
