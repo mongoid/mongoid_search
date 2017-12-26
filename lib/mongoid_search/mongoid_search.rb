@@ -14,12 +14,12 @@ module Mongoid::Search
   module ClassMethods #:nodoc:
     # Set a field or a number of fields as sources for search
     def search_in(*args)
-      args, _options = args_and_options(args)
-      self.search_fields = (search_fields || []).concat args
+      args, options = args_and_options(args)
+      set_search_fields(options[:index], args)
 
-      field :_keywords, type: Array
+      field options[:index], type: Array
 
-      index({ _keywords: 1 }, background: true)
+      index({ options[:index] => 1 }, background: true)
 
       before_save :set_keywords
     end
@@ -49,13 +49,20 @@ module Mongoid::Search
 
     private
 
+    def set_search_fields(index, fields)
+      self.search_fields ||= {}
+
+      (self.search_fields[index] ||= []).concat fields
+    end
+
     def query(keywords, options)
       keywords_hash = keywords.map do |kw|
         if Mongoid::Search.regex_search
           escaped_kw = Regexp.escape(kw)
           kw = Mongoid::Search.regex.call(escaped_kw)
         end
-        { _keywords: kw }
+
+        { options[:index] => kw }
       end
 
       criteria.send("#{(options[:match])}_of", *keywords_hash)
@@ -65,6 +72,7 @@ module Mongoid::Search
       options = args.last.is_a?(Hash) &&
         %i[match
            allow_empty_search
+           index
            relevant_search].include?(args.last.keys.first) ? args.pop : {}
 
       [args, extract_options(options)]
@@ -74,7 +82,8 @@ module Mongoid::Search
       {
         match: options[:match] || Mongoid::Search.match,
         allow_empty_search: options[:allow_empty_search] || Mongoid::Search.allow_empty_search,
-        relevant_search: options[:relevant_search] || Mongoid::Search.relevant_search
+        relevant_search: options[:relevant_search] || Mongoid::Search.relevant_search,
+        index: options[:index] || :_keywords
       }
     end
 
@@ -99,8 +108,8 @@ module Mongoid::Search
           function() {
             var entries = 0;
             for(i in keywords) {
-              for(j in this._keywords) {
-                if(this._keywords[j] == keywords[i]) {
+              for(j in this.#{options[:index]}) {
+                if(this.#{options[:index]}[j] == keywords[i]) {
                   entries++;
                 }
               }
@@ -122,11 +131,19 @@ module Mongoid::Search
   end
 
   def index_keywords!
-    update_attribute(:_keywords, set_keywords)
+    search_fields.map do |index, fields|
+      update_attribute(index, get_keywords(fields))
+    end
   end
 
   def set_keywords
-    self._keywords = Mongoid::Search::Util.keywords(self, search_fields)
-                                          .flatten.reject { |k| k.nil? || k.empty? }.uniq.sort
+    search_fields.each do |index, fields|
+      send("#{index}=", get_keywords(fields))
+    end
+  end
+
+  def get_keywords(fields)
+    Mongoid::Search::Util.keywords(self, fields)
+                         .flatten.reject { |k| k.nil? || k.empty? }.uniq.sort
   end
 end
