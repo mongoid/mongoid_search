@@ -3,6 +3,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Mongoid::Search do
   before(:all) do
     @default_proc = Mongoid::Search.stem_proc
+    @default_strip_symbols = Mongoid::Search.strip_symbols
+    @default_strip_accents = Mongoid::Search.strip_accents
   end
 
   after(:all) do
@@ -239,6 +241,22 @@ describe Mongoid::Search do
 
     it 'should return results in search with a full word if using regex search' do
       expect(Product.full_text_search('iphone').size).to eq 1
+    end
+
+    context 'when query include special characters that should not be stripped' do
+      before do
+        Mongoid::Search.strip_symbols = /[\n]/
+        Mongoid::Search.strip_accents = /[^\s\p{Graph}]/
+      end
+
+      after do
+        Mongoid::Search.strip_symbols = @default_strip_symbols
+        Mongoid::Search.strip_accents = @default_strip_accents
+      end
+
+      it 'should escape regex special characters' do
+        expect(Product.full_text_search('iphone (steve').size).to eq 1
+      end
     end
 
     context 'Match partial words on the beginning' do

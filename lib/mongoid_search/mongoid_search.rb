@@ -51,7 +51,10 @@ module Mongoid::Search
 
     def query(keywords, options)
       keywords_hash = keywords.map do |kw|
-        kw = Mongoid::Search.regex.call(kw) if Mongoid::Search.regex_search
+        if Mongoid::Search.regex_search
+          escaped_kw = Regexp.escape(kw)
+          kw = Mongoid::Search.regex.call(escaped_kw)
+        end
         { _keywords: kw }
       end
 
