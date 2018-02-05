@@ -15,6 +15,9 @@ tmtags
 ## RVM
 .rvmrc
 
+## RubyMine
+.idea
+
 ## VIM
 *.swp
 
