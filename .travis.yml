@@ -27,3 +27,5 @@ matrix:
       env:
         - MONGOID_VERSION=HEAD
     - rvm: 2.3.0
+      before_script:
+        - bundle exec danger

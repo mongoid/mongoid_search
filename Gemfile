@@ -24,3 +24,7 @@ group :development do
   gem 'rubocop', '0.52.0'
   gem 'simplecov'
 end
+
+group :test do
+  gem 'mongoid-danger', '~> 0.1.0', require: false
+end
