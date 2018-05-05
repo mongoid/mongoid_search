@@ -6,7 +6,7 @@ case version = ENV['MONGOID_VERSION'] || '6.0'
 when 'HEAD'
   gem 'mongoid', github: 'mongodb/mongoid'
 when /^7/
-  gem 'mongoid', github: 'mongodb/mongoid', branch: '7.0-dev'
+  gem 'mongoid', '~> 7.0'
 when /^6/
   gem 'mongoid', '~> 6.0'
 when /^5/
