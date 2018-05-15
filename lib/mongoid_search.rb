@@ -50,7 +50,7 @@ module Mongoid::Search
   # Ligatures to be replaced
   # http://en.wikipedia.org/wiki/Typographic_ligature
   mattr_accessor :ligatures
-  @@ligatures = { 'œ' => 'oe', 'æ' => 'ae' }
+  @@ligatures = { 'œ' => 'oe', 'æ' => 'ae', 'ꜵ' => 'ao' }
 
   # Minimum word size. Words smaller than it won't be indexed
   mattr_accessor :minimum_word_size

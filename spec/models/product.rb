@@ -5,6 +5,8 @@ class Product
 
   field :brand
   field :name
+  field :unit
+  field :measures, type: Array
   field :attrs, type: Array
   field :info, type: Hash
 
@@ -18,4 +20,5 @@ class Product
 
   search_in :brand, :name, :outlet, :attrs, tags: :name, category: %i[name description],
                                             subproducts: %i[brand name], info: %i[summary description]
+  search_in :unit, :measures, index: :_unit_keywords
 end

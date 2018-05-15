@@ -18,6 +18,7 @@ describe Mongoid::Search do
     Mongoid::Search.stem_proc     = @default_proc
     @product = Product.create brand: 'Apple',
                               name: 'iPhone',
+                              unit: 'mobile olé awesome',
                               tags: (@tags = %w[Amazing Awesome Olé].map { |tag| Tag.new(name: tag) }),
                               category: Category.new(name: 'Mobile', description: 'Reviews'),
                               subproducts: [Subproduct.new(brand: 'Apple', name: 'Craddle')],
@@ -52,6 +53,7 @@ describe Mongoid::Search do
       Mongoid::Search.ignore_list   = nil
       @product = Product.create brand: 'Эльбрус',
                                 name: 'Процессор',
+                                unit: 'kílográm Olé',
                                 tags: %w[Amazing Awesome Olé].map { |tag| Tag.new(name: tag) },
                                 category: Category.new(name: 'процессоры'),
                                 subproducts: []
@@ -59,10 +61,12 @@ describe Mongoid::Search do
 
     it 'should leave utf8 characters' do
       expect(@product._keywords).to eq %w[amazing awesome ole процессор процессоры эльбрус]
+      expect(@product._unit_keywords).to eq %w[kilogram ole]
     end
 
     it "should return results in search when case doesn't match" do
       expect(Product.full_text_search('ЭЛЬБРУС').size).to eq 1
+      expect(Product.full_text_search('KILOGRAM', index: :_unit_keywords).size).to eq 1
     end
   end
 
@@ -74,15 +78,18 @@ describe Mongoid::Search do
     end
 
     it 'should validate keywords' do
-      product = Product.create brand: 'Apple', name: 'iPhone'
+      product = Product.create brand: 'Apple', name: 'iPhone', unit: 'box'
       expect(product._keywords).to eq(%w[apple iphone])
+      expect(product._unit_keywords).to eq(%w[box])
     end
   end
 
   it 'should set the _keywords field for array fields also' do
     @product.attrs = ['lightweight', 'plastic', :red]
+    @product.measures = ['box', 'bunch', :bag]
     @product.save!
     expect(@product._keywords).to include 'lightweight', 'plastic', 'red'
+    expect(@product._unit_keywords).to include 'box', 'bunch', 'bag'
   end
 
   it 'should inherit _keywords field and build upon' do
@@ -91,39 +98,48 @@ describe Mongoid::Search do
                              tags: %w[Amazing Awesome Olé].map { |tag| Tag.new(name: tag) },
                              category: Category.new(name: 'Mobile'),
                              subproducts: [Subproduct.new(brand: 'Apple', name: 'Craddle')],
-                             color: :white
+                             color: :white,
+                             size: :big
     expect(variant._keywords).to include 'white'
+    expect(variant._unit_keywords).to include 'big'
     expect(Variant.full_text_search(name: 'Apple', color: :white)).to eq [variant]
+    expect(Variant.full_text_search({ size: 'big' }, index: :_unit_keywords)).to eq [variant]
   end
 
   it 'should expand the ligature to ease searching' do
     # ref: http://en.wikipedia.org/wiki/Typographic_ligature, only for french right now. Rules for other languages are not know
     variant1 = Variant.create tags: ['œuvre'].map { |tag| Tag.new(name: tag) }
     variant2 = Variant.create tags: ['æquo'].map { |tag| Tag.new(name: tag) }
+    variant3 = Variant.create measures: ['ꜵquo'].map { |measure| measure }
 
     expect(Variant.full_text_search('œuvre')).to eq [variant1]
     expect(Variant.full_text_search('oeuvre')).to eq [variant1]
     expect(Variant.full_text_search('æquo')).to eq [variant2]
     expect(Variant.full_text_search('aequo')).to eq [variant2]
+    expect(Variant.full_text_search('aoquo', index: :_unit_keywords)).to eq [variant3]
+    expect(Variant.full_text_search('ꜵquo', index: :_unit_keywords)).to eq [variant3]
   end
 
-  it 'should set the _keywords field with stemmed words if stem is enabled' do
+  it 'should set the keywords fields with stemmed words if stem is enabled' do
     Mongoid::Search.stem_keywords = true
     @product.save!
     expect(@product._keywords.sort).to eq %w[amaz appl awesom craddl iphon mobil review ol info descript summari].sort
+    expect(@product._unit_keywords.sort).to eq %w[mobil awesom ol].sort
   end
 
-  it 'should set the _keywords field with custom stemmed words if stem is enabled with a custom lambda' do
+  it 'should set the keywords fields with custom stemmed words if stem is enabled with a custom lambda' do
     Mongoid::Search.stem_keywords = true
     Mongoid::Search.stem_proc     = proc { |word| word.upcase }
     @product.save!
     expect(@product._keywords.sort).to eq %w[AMAZING APPLE AWESOME CRADDLE DESCRIPTION INFO IPHONE MOBILE OLE REVIEWS SUMMARY]
+    expect(@product._unit_keywords.sort).to eq %w[AWESOME MOBILE OLE]
   end
 
   it 'should ignore keywords in an ignore list' do
     Mongoid::Search.ignore_list = YAML.safe_load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))['ignorelist']
     @product.save!
     expect(@product._keywords.sort).to eq %w[apple craddle iphone mobile reviews ole info description summary].sort
+    expect(@product._unit_keywords.sort).to eq %w[mobile ole].sort
   end
 
   it 'should incorporate numbers as keywords' do
@@ -205,7 +221,7 @@ describe Mongoid::Search do
   end
 
   it 'should have a method to index keywords' do
-    expect(@product.index_keywords!).to eq true
+    expect(@product.index_keywords!).to include(true)
   end
 
   it 'should have a class method to index all documents keywords' do

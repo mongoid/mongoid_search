@@ -26,12 +26,14 @@ class Product
   include Mongoid::Search
   field :brand
   field :name
+  field :unit
   field :info, type: Hash
 
   has_many   :tags
   belongs_to :category
 
   search_in :brand, :name, tags: :name, category: :name, info: %i[summary description]
+  search_in :unit, index: :_unit_keywords
 end
 
 class Tag
@@ -52,7 +54,7 @@ end
 Now when you save a product, you get a `_keywords` field automatically:
 
 ```ruby
-p = Product.new brand: 'Apple', name: 'iPhone', info: { summary: 'Info-summary', description: 'Info-description' }
+p = Product.new brand: 'Apple', name: 'iPhone', unit: 'kilogram', info: { summary: 'Info-summary', description: 'Info-description' }
 p.tags << Tag.new(name: 'Amazing')
 p.tags << Tag.new(name: 'Awesome')
 p.tags << Tag.new(name: 'Superb')
@@ -60,12 +62,21 @@ p.save
 # => true
 p._keywords
 # => ["amazing", "apple", "awesome", "iphone", "superb", "Info-summary", "Info-description"]
+p._unit_keywords
+# => ["kilogram"]
 ```
 
 Now you can run search, which will look in the `_keywords` field and return all matching results:
 
 ```ruby
 Product.full_text_search("apple iphone").size
+# => 1
+```
+
+Of course, some models could have more than one index. For instance, two different searches with different fields, so you could even specify from which index should be searched:
+
+```ruby
+Product.full_text_search("kilogram", index: :_unit_keywords).size
 # => 1
 ```
 
@@ -130,6 +141,20 @@ Product.full_text_search('amazing apple', relevant_search: true)
 ```
 
 Please note that relevant_search will return an Array and not a Criteria object. The search method should always be called in the end of the method chain.
+
+### index
+
+Default is `_keywords`.
+
+```ruby
+Product.full_text_search('amazing apple', index: :_keywords)
+# => [#<Product _id: 5016e7d16af54efe1c000001, _type: nil, brand: "Apple", name: "iPhone", unit: "l", attrs: nil, info: nil, category_id: nil, _keywords: ["amazing", "apple", "awesome", "iphone", "superb"], _unit_keywords: ["l"], relevance: 2.0>]
+
+Product.full_text_search('kg', index: :_unit_keywords)
+# => [#<Product _id: 5016e7d16af54efe1c000001, _type: nil, brand: "Apple", name: "iPhone", unit: "kg", attrs: nil, info: nil, category_id: nil, _keywords: ["amazing", "apple", "awesome", "iphone", "superb"], _unit_keywords: ["kg"], relevance: 2.0>]
+```
+
+index enables to have two or more different searches, with different or same fields. It should be noted that indexes are exclusive per each one.
 
 ## Initializer
 
