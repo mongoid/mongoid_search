@@ -73,6 +73,22 @@ Product.full_text_search("apple iphone").size
 # => 1
 ```
 
+You can also search in "virtual" fields by defining them as methods. This can be useful when you have a method with dynamic fields (i.e. variable schema).
+```ruby
+class ModelWithDynamicFields
+  
+  ...
+  
+  search_in :search_data
+
+  def search_data
+    # concatenate all String fields' values
+    self.attributes.select{|k,v| v.is_a?(String) }.values.join(' ')
+  end
+end
+```
+Mongoid_search will run the method before save and use it's output to populate the `_keywords` field.
+
 Of course, some models could have more than one index. For instance, two different searches with different fields, so you could even specify from which index should be searched:
 
 ```ruby
