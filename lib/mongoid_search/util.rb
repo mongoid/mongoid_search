@@ -40,7 +40,7 @@ module Mongoid::Search::Util
     return [] if text.blank?
     text = text.to_s
                .mb_chars
-               .normalize(:kd)
+               .unicode_normalize(:nfkd)
                .downcase
                .to_s
                .gsub(strip_symbols, ' ') # strip symbols
