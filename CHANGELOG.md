@@ -1,6 +1,7 @@
 ## 0.4.0 (next)
 
 * Your contribution here.
+* [#138](https://github.com/mongoid/mongoid_search/pull/138): Update mongoid::search::util.normalize_keywords - [@yads](https://github.com/yads).
 * [#132](https://github.com/mongoid/mongoid_search/pull/132): Add RELEASING and CONTRIBUTING - [@rtrv](https://github.com/rtrv).
 
 ## 0.3.6
