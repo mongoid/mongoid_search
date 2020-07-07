@@ -20,7 +20,7 @@ else
 end
 
 group :development do
-  gem 'rake', '< 12'
+  gem 'rake', '~> 11'
   gem 'rubocop', '0.52.0'
   gem 'simplecov'
 end
