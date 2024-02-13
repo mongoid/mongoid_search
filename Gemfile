@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'http://rubygems.org'
 
 gemspec
@@ -20,11 +22,11 @@ else
 end
 
 group :development do
-  gem 'rake', '~> 11'
-  gem 'rubocop', '0.52.0'
+  gem 'rake', '>= 12.3.3'
+  gem 'rubocop', '1.56.0'
   gem 'simplecov'
 end
 
 group :test do
-  gem 'mongoid-danger', '~> 0.1.0', require: false
+  gem 'mongoid-danger', '~> 0.2.0', require: false
 end
