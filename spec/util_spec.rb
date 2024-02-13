@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.expand_path("#{File.dirname(__FILE__)}/spec_helper")
 
 describe Mongoid::Search::Util do
   before(:all) do
@@ -58,7 +59,7 @@ describe Mongoid::Search::Util do
 
   it 'should ignore keywords from ignore list' do
     Mongoid::Search.stem_keywords = true
-    Mongoid::Search.ignore_list = YAML.safe_load(File.open(File.dirname(__FILE__) + '/config/ignorelist.yml'))['ignorelist']
+    Mongoid::Search.ignore_list = YAML.safe_load(File.open("#{File.dirname(__FILE__)}/config/ignorelist.yml"))['ignorelist']
     expect(Mongoid::Search::Util.normalize_keywords('An amazing awesome runner running and eating')).to eq %w[an runner run and eat]
   end
 

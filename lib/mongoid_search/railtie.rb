@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mongoid::Search
   class Railtie < Rails::Railtie
     rake_tasks do

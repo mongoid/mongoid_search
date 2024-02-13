@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mongoid::Search
   extend ActiveSupport::Concern
 
@@ -11,7 +13,7 @@ module Mongoid::Search
     @@classes
   end
 
-  module ClassMethods #:nodoc:
+  module ClassMethods # :nodoc:
     # Set a field or a number of fields as sources for search
     def search_in(*args)
       args, options = args_and_options(args)
@@ -65,7 +67,7 @@ module Mongoid::Search
         { options[:index] => kw }
       end
 
-      criteria.send("#{(options[:match])}_of", *keywords_hash)
+      criteria.send("#{options[:match]}_of", *keywords_hash)
     end
 
     def args_and_options(args)

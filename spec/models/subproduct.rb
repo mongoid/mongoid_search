@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Subproduct
   include Mongoid::Document
   include Mongoid::Attributes::Dynamic if ::Mongoid::VERSION >= '4'
