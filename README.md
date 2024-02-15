@@ -2,7 +2,7 @@
 
 Mongoid Search is a simple full text search implementation for Mongoid ORM. It supports Mongoid 3, 4, 5 and 6 and performs well for small data sets. If your searchable model is big (i.e. 1.000.000+ records), [mongoid_fulltext](https://github.com/mongoid/mongoid_fulltext), ElasticSearch, Solr or Sphinx may suit you better.
 
-[![Build Status](https://travis-ci.org/mongoid/mongoid_search.svg?branch=master)](https://travis-ci.org/mongoid/mongoid_search)
+[![Test](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml/badge.svg)](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml)
 
 ## Installation
 
