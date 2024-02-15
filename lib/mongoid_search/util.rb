@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Mongoid::Search::Util
   def self.keywords(klass, fields)
@@ -17,8 +18,8 @@ module Mongoid::Search::Util
         end
       end
     else
-      value = if klass.respond_to?(fields.to_s + '_translations')
-                klass.send(fields.to_s + '_translations').values
+      value = if klass.respond_to?("#{fields}_translations")
+                klass.send("#{fields}_translations").values
               elsif klass.respond_to?(fields)
                 klass.send(fields)
               else
@@ -38,6 +39,7 @@ module Mongoid::Search::Util
     strip_accents = Mongoid::Search.strip_accents
 
     return [] if text.blank?
+
     text = text.to_s
                .mb_chars
                .unicode_normalize(:nfkd)
@@ -45,7 +47,7 @@ module Mongoid::Search::Util
                .to_s
                .gsub(strip_symbols, ' ') # strip symbols
                .gsub(strip_accents, '')  # strip accents
-               .gsub(/[#{ligatures.keys.join("")}]/) { |c| ligatures[c] }
+               .gsub(/[#{ligatures.keys.join('')}]/) { |c| ligatures[c] }
                .split(' ')
                .reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?

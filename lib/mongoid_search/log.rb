@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mongoid::Search::Log
   cattr_accessor :silent
 

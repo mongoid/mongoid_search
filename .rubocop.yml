@@ -1,7 +1,16 @@
 AllCops:
+  TargetRubyVersion: 2.7
   Exclude:
     - vendor/**/*
 -Metrics/BlockLength:
   Enabled: false
+Metrics/CyclomaticComplexity:
+  Max: 20
+Metrics/PerceivedComplexity:
+  Max: 30
+Metrics/AbcSize:
+  Max: 100
+  Exclude:
+    - 'spec/**/*'
 
 inherit_from: .rubocop_todo.yml

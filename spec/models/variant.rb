@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 autoload :Product, 'models/product.rb'
 class Variant < Product
   field :color

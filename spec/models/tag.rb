@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Tag
   include Mongoid::Document
   include Mongoid::Search

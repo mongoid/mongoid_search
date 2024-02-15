@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mongoid_search/mongoid_search'
 
 require 'mongoid_search/railtie' if defined?(Rails)
@@ -58,7 +60,7 @@ module Mongoid::Search
 
   # Strip special symbols
   mattr_accessor :strip_symbols
-  @@strip_symbols = /[._:;'\"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
+  @@strip_symbols = /[._:;'"`,?|+={}()!@#%^&*<>~$\-\\\/\[\]]/
 
   # Strip accents
   mattr_accessor :strip_accents

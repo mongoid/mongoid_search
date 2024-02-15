@@ -1,5 +1,6 @@
 ## 0.5.0 (next)
 * Your contribution here.
+* [#146](https://github.com/mongoid/mongoid_search/pull/146): Update dependencies and switch to Github Actions - [@yads](https://github.com/yads).
 
 ## 0.4.0
 

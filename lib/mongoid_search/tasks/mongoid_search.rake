@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :mongoid_search do
   desc 'Goes through all documents with search enabled and indexes the keywords.'
   task index: :environment do
