@@ -1,10 +1,10 @@
 ## 0.5.0 (next)
-* Your contribution here.
 * [#146](https://github.com/mongoid/mongoid_search/pull/146): Update dependencies and switch to Github Actions - [@yads](https://github.com/yads).
+* Your contribution here.
 
 ## 0.4.0
 
-* [#138](https://github.com/mongoid/mongoid_search/pull/138): Update mongoid::search::util.normalize_keywords - [@yads](https://github.com/yads).
+* [#138](https://github.com/mongoid/mongoid_search/pull/138): Update `Mongoid::Search::Util.normalize_keywords` - [@yads](https://github.com/yads).
 * [#132](https://github.com/mongoid/mongoid_search/pull/132): Add RELEASING and CONTRIBUTING - [@rtrv](https://github.com/rtrv).
 
 ## 0.3.6

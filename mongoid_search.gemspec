@@ -5,7 +5,7 @@ $LOAD_PATH.unshift lib unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |s|
   s.name = 'mongoid_search'
-  s.version = '0.4.0'
+  s.version = '0.5.0'
   s.authors = ['Mauricio Zaffari']
   s.email = ['mauricio@papodenerd.net']
   s.homepage = 'https://github.com/mongoid/mongoid_search'

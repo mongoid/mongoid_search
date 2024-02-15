@@ -25,7 +25,7 @@ Remove the line with "Your contribution here.", since there will be no more cont
 Commit your changes.
 
 ```
-git add CHANGELOG.md lib/mongoid/search/version.rb
+git add CHANGELOG.md
 git commit -m "Preparing for release, 0.4.0."
 git push origin master
 ```
@@ -51,12 +51,12 @@ Add the next release to [CHANGELOG.md](CHANGELOG.md).
 * Your contribution here.
 ```
 
-Increment the minor version, modify [lib/mongoid/search/version.rb](lib/mongoid/search/version.rb).
+Increment the minor version, modify [mongoid_search.gemspec](mongoid_search.gemspec).
 
 Commit your changes.
 
 ```
-git add CHANGELOG.md lib/mongoid/search/version.rb
+git add CHANGELOG.md mongoid_search.gemspec
 git commit -m "Preparing for next release, 0.4.1."
 git push origin master
 ```
