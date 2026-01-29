@@ -24,5 +24,7 @@ group :development do
 end
 
 group :test do
-  gem 'mongoid-danger', '~> 0.2.0', require: false
+  gem 'danger', require: false
+  gem 'danger-changelog', require: false
+  gem 'danger-pr-comment', require: false
 end
