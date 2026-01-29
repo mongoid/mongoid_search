@@ -41,7 +41,6 @@ module Mongoid::Search::Util
     return [] if text.blank?
 
     text = text.to_s
-               .mb_chars
                .unicode_normalize(:nfkd)
                .downcase
                .to_s
