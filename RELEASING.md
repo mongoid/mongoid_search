@@ -17,7 +17,7 @@ Check that the last build succeeded in [GitHub Actions](https://github.com/mongo
 Change "Next Release" in [CHANGELOG.md](CHANGELOG.md) to the new version.
 
 ```
-### 0.4.0 (2018-01-01)
+### 0.6.0 (2026-02-02)
 ```
 
 Remove the line with "Your contribution here.", since there will be no more contributions to this release.
@@ -26,27 +26,29 @@ Commit your changes.
 
 ```
 git add CHANGELOG.md
-git commit -m "Preparing for release, 0.4.0."
+git commit -m "Preparing for release, 0.6.0."
 git push origin master
 ```
 
 Release.
 
 ```
-$ rake release
+$ bundle exec rake release
 
-mongoid-search 0.4.0 built to pkg/mongoid-search-0.4.0.gem.
-Tagged v0.4.0.
+mongoid_search 0.6.0 built to pkg/mongoid_search-0.6.0.gem.
+Tagged v0.6.0.
 Pushed git commits and tags.
-Pushed mongoid-search 0.4.0 to rubygems.org.
+Pushed mongoid_search 0.6.0 to rubygems.org.
 ```
+
+**Note:** You must have RubyGems credentials configured and push permissions for the `mongoid_search` gem. If you haven't authenticated yet, run `gem signin` first.
 
 ### Prepare for the Next Version
 
 Add the next release to [CHANGELOG.md](CHANGELOG.md).
 
 ```
-### 0.4.1 (Next)
+### 0.6.0 (Next)
 
 * Your contribution here.
 ```
@@ -57,7 +59,7 @@ Commit your changes.
 
 ```
 git add CHANGELOG.md mongoid_search.gemspec
-git commit -m "Preparing for next release, 0.4.1."
+git commit -m "Preparing for next release, 0.6.0."
 git push origin master
 ```
 

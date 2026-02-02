@@ -13,3 +13,5 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:rubocop)
 
 task default: %i[rubocop spec]
+
+require 'bundler/gem_tasks'

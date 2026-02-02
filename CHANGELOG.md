@@ -1,9 +1,11 @@
-## 0.5.0 (next)
-* [#152](https://github.com/mongoid/mongoid_search/pull/152): Migrate Danger to use danger-pr-comment workflow - [@dblock](https://github.com/dblock).
+## 0.6.0 (next)
 * Your contribution here.
+
+## 0.5.0
+* [#153](https://github.com/mongoid/mongoid_search/pull/153): Update to newer version of ruby and fix cops - [@yads](https://github.com/yads).
+* [#152](https://github.com/mongoid/mongoid_search/pull/152): Migrate Danger to use danger-pr-comment workflow - [@dblock](https://github.com/dblock).
 * [#151](https://github.com/mongoid/mongoid_search/pull/151): Remove deprecated `mb_chars` call (Rails 8.1) - [@stanley90](https://github.com/stanley90).
 * [#146](https://github.com/mongoid/mongoid_search/pull/146): Update dependencies and switch to Github Actions - [@yads](https://github.com/yads).
-* Your contribution here.
 
 ## 0.4.0
 
