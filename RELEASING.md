@@ -12,12 +12,7 @@ bundle install
 bundle exec rake
 ```
 
-Check that the last build succeeded in [Travis CI](https://travis-ci.org/mongoid/mongoid-search) for all supported platforms.
-
-Increment the version, modify [lib/mongoid/search/version.rb](lib/mongoid/search/version.rb).
-
-*  Increment the third number if the release has bug fixes and/or very minor features, only (eg. change `0.5.1` to `0.5.2`).
-*  Increment the second number if the release contains major features or breaking API changes (eg. change `0.5.1` to `0.4.0`).
+Check that the last build succeeded in [GitHub Actions](https://github.com/mongoid/mongoid_search/actions) for all supported platforms.
 
 Change "Next Release" in [CHANGELOG.md](CHANGELOG.md) to the new version.
 
@@ -30,7 +25,7 @@ Remove the line with "Your contribution here.", since there will be no more cont
 Commit your changes.
 
 ```
-git add CHANGELOG.md lib/mongoid/search/version.rb
+git add CHANGELOG.md
 git commit -m "Preparing for release, 0.4.0."
 git push origin master
 ```
@@ -56,12 +51,14 @@ Add the next release to [CHANGELOG.md](CHANGELOG.md).
 * Your contribution here.
 ```
 
-Increment the minor version, modify [lib/mongoid/search/version.rb](lib/mongoid/search/version.rb).
+Increment the minor version, modify [mongoid_search.gemspec](mongoid_search.gemspec).
 
 Commit your changes.
 
 ```
-git add CHANGELOG.md lib/mongoid/search/version.rb
+git add CHANGELOG.md mongoid_search.gemspec
 git commit -m "Preparing for next release, 0.4.1."
 git push origin master
 ```
+
+Major version numbers are incremented with the first new feature.
