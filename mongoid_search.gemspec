@@ -14,18 +14,14 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
 
   s.required_rubygems_version = '>= 1.3.6'
-  s.required_ruby_version = '>= 2.7'
+  s.required_ruby_version = '>= 3.0'
 
   s.platform = 'ruby'
 
   s.add_dependency('fast-stemmer', ['~> 1.0.0'])
-  s.add_dependency('mongoid', ['>= 5.0.0'])
-  s.add_development_dependency('database_cleaner-mongoid', ['>= 2.0.0'])
-  s.add_development_dependency('mongoid-compatibility')
-  s.add_development_dependency('rake', ['>= 12.3.3'])
-  s.add_development_dependency('rspec', ['~> 3.1'])
+  s.add_dependency('mongoid', ['>= 6.0.0'])
 
   s.require_path = 'lib'
   s.files = Dir['lib/**/*', 'tasks/*.rake'] + %w[LICENSE README.md Rakefile]
-  s.test_files = Dir.glob('spec/**/*')
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

@@ -46,8 +46,8 @@ module Mongoid::Search::Util
                .to_s
                .gsub(strip_symbols, ' ') # strip symbols
                .gsub(strip_accents, '')  # strip accents
-               .gsub(/[#{ligatures.keys.join('')}]/) { |c| ligatures[c] }
-               .split(' ')
+               .gsub(/[#{ligatures.keys.join}]/) { |c| ligatures[c] }
+               .split
                .reject { |word| word.size < Mongoid::Search.minimum_word_size }
     text = text.reject { |word| ignore_list.include?(word) } unless ignore_list.blank?
     text = text.map(&stem_proc) if stem_keywords

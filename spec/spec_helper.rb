@@ -16,7 +16,7 @@ Mongoid.configure do |config|
   config.connect_to 'mongoid_search_test'
 end
 
-Dir["#{File.dirname(__FILE__)}/models/*.rb"].sort.each { |file| require file }
+Dir["#{File.dirname(__FILE__)}/models/*.rb"].each { |file| require file }
 
 RSpec.configure do |config|
   config.before(:all) do
