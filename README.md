@@ -2,7 +2,10 @@
 
 Mongoid Search is a simple full text search implementation for Mongoid ORM. It supports Mongoid 6, 7, and 8 and performs well for small data sets. If your searchable model is big (i.e. 1.000.000+ records), [mongoid_fulltext](https://github.com/mongoid/mongoid_fulltext), ElasticSearch, Solr or Sphinx may suit you better.
 
-[![Test](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml/badge.svg)](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml)
+[![Test](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml?query=branch%3Amaster)
+[![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid_search/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid_search?branch=master)
+
+CI collects SimpleCov coverage on Ruby 3.4 with Mongoid 9 and MongoDB 8.0 and submits one report to Coveralls using GitHub's workflow token. To generate a local report, run `COVERAGE=true MONGOID_VERSION=9 bundle install` followed by `COVERAGE=true MONGOID_VERSION=9 bundle exec rspec`. Reports are written to `coverage/`.
 
 ## Installation
 
