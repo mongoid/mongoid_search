@@ -29,7 +29,7 @@ jobs:
 
     env:
       MONGOID_VERSION: ${{ matrix.entry.mongoid }}
-      COVERAGE: ${{ matrix.entry.coverage }}
+      COVERAGE: ${{ matrix.entry.ruby == '3.4' }}
 
     steps:
     - uses: actions/checkout@v6
@@ -43,8 +43,10 @@ jobs:
     - name: Run tests
       run: bundle exec rspec
 
-    - name: Code Climate
-      if: ${{ env.CC_TEST_REPORTER_ID != '' && success() && matrix.entry.coverage == 'true' }}
-      uses: paambaati/codeclimate-action@v3.2.0
-      env:
-        CC_TEST_REPORTER_ID: ${{ vars.CC_TEST_REPORTER_ID }}
+    - name: Coveralls
+      if: matrix.entry.ruby == '3.4'
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: coverage/.resultset.json
+        format: simplecov

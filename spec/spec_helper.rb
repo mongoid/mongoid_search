@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
-require 'simplecov'
-SimpleCov.start
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/spec/'
+    track_files 'lib/**/*.rb'
+  end
+end
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))

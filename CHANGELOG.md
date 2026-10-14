@@ -1,5 +1,6 @@
 ## 0.6.0 (next)
 * Your contribution here.
+* [#155](https://github.com/mongoid/mongoid_search/pull/155): Replace Code Climate with SimpleCov and Coveralls reporting in CI and update status badges - [@dblock](https://github.com/dblock).
 * [#154](https://github.com/mongoid/mongoid_search/pull/154): Test through Ruby 4.0, Mongoid 9, and MongoDB 8.0 with representative legacy coverage and explicitly bundle OpenStruct - [@dblock](https://github.com/dblock).
 
 ## 0.5.0
