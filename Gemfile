@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gemspec
 
-case version = ENV['MONGOID_VERSION'] || '8'
+case version = ENV['MONGOID_VERSION'] || '9'
 when 'HEAD'
   gem 'mongoid', github: 'mongodb/mongoid'
+when /^9/
+  gem 'mongoid', '~> 9.0'
 when /^8/
   gem 'mongoid', '~> 8'
 when /^7/
@@ -20,6 +22,7 @@ end
 group :development do
   gem 'database_cleaner-mongoid', '>= 2.0.0'
   gem 'mongoid-compatibility'
+  gem 'ostruct'
   gem 'rake', '>= 12.3.3'
   gem 'rspec', '~> 3.1'
   gem 'rubocop', '1.56.0'
