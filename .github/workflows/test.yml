@@ -10,14 +10,11 @@ jobs:
       matrix:
         entry:
           - { ruby: '3.0', mongo: 'mongo:4.4', mongoid: '6' }
-          - { ruby: '3.1', mongo: 'mongo:4.4', mongoid: '6' }
-          - { ruby: '3.2', mongo: 'mongo:4.4', mongoid: '6' }
-          - { ruby: '3.0', mongo: 'mongo:4.4', mongoid: '7' }
-          - { ruby: '3.1', mongo: 'mongo:4.4', mongoid: '7' }
-          - { ruby: '3.2', mongo: 'mongo:4.4', mongoid: '7' }
-          - { ruby: '3.0', mongo: 'mongo:4.4', mongoid: '8' }
-          - { ruby: '3.1', mongo: 'mongo:4.4', mongoid: '8' }
-          - { ruby: '3.2', mongo: 'mongo:4.4', mongoid: '8' }
+          - { ruby: '3.1', mongo: 'mongo:5.0', mongoid: '7' }
+          - { ruby: '3.2', mongo: 'mongo:6.0', mongoid: '8' }
+          - { ruby: '3.3', mongo: 'mongo:7.0', mongoid: '9' }
+          - { ruby: '3.4', mongo: 'mongo:8.0', mongoid: '9' }
+          - { ruby: '4.0', mongo: 'mongo:8.0', mongoid: '9' }
         experimental: [false]
 
     name: test (ruby=${{ matrix.entry.ruby }}, mongo=${{ matrix.entry.mongo }}, mongoid=${{ matrix.entry.mongoid }})
@@ -35,7 +32,7 @@ jobs:
       COVERAGE: ${{ matrix.entry.coverage }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -43,9 +40,6 @@ jobs:
         ruby-version: ${{ matrix.entry.ruby }}
         bundler-cache: true
 
-    - name: Bundle install
-      run: bundle install
-  
     - name: Run tests
       run: bundle exec rspec
 
