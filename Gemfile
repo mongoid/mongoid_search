@@ -23,6 +23,7 @@ group :development do
   gem 'database_cleaner-mongoid', '>= 2.0.0'
   gem 'mongoid-compatibility'
   gem 'ostruct'
+  gem 'railties', '>= 5.2', '< 7.3'
   gem 'rake', '>= 12.3.3'
   gem 'rspec', '~> 3.1'
   gem 'rubocop', '1.56.0'
