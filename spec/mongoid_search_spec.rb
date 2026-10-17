@@ -306,11 +306,14 @@ describe Mongoid::Search do
     end
   end
 
-  # relevant search specs are currently broken due to calling sort on an array of arrays
-  xcontext 'relevant search' do
+  context 'relevant search' do
     before do
       Mongoid::Search.relevant_search = true
       @imac = Product.create name: 'apple imac'
+    end
+
+    after do
+      Mongoid::Search.relevant_search = false
     end
 
     it 'should return results ordered by relevance and with correct ids' do

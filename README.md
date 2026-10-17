@@ -161,6 +161,10 @@ Product.full_text_search('amazing apple', relevant_search: true)
 
 Please note that relevant_search will return an Array and not a Criteria object. The search method should always be called in the end of the method chain.
 
+Results are ordered by decreasing numeric relevance (the number of matching indexed keywords). This option uses MongoDB map-reduce, which is deprecated upstream and requires server-side JavaScript.
+
+Upgrading from an earlier release? See [UPGRADING](UPGRADING.md) for the relevance ordering change in 0.6.0.
+
 ### index
 
 Default is `_keywords`.
