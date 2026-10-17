@@ -13,7 +13,7 @@ jobs:
           - { ruby: '3.1', mongo: 'mongo:5.0', mongoid: '7' }
           - { ruby: '3.2', mongo: 'mongo:6.0', mongoid: '8' }
           - { ruby: '3.3', mongo: 'mongo:7.0', mongoid: '9' }
-          - { ruby: '3.4', mongo: 'mongo:8.0', mongoid: '9' }
+          - { ruby: '3.4', mongo: 'mongo:8.0', mongoid: '9', coverage: true }
           - { ruby: '4.0', mongo: 'mongo:8.0', mongoid: '9' }
         experimental: [false]
 
@@ -29,7 +29,7 @@ jobs:
 
     env:
       MONGOID_VERSION: ${{ matrix.entry.mongoid }}
-      COVERAGE: ${{ matrix.entry.ruby == '3.4' }}
+      COVERAGE: ${{ matrix.entry.coverage }}
 
     steps:
     - uses: actions/checkout@v6
@@ -44,7 +44,7 @@ jobs:
       run: bundle exec rspec
 
     - name: Coveralls
-      if: matrix.entry.ruby == '3.4'
+      if: matrix.entry.coverage
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
