@@ -94,7 +94,7 @@ module Mongoid::Search
     end
 
     def search_relevant(query, options)
-      results_with_relevance(query, options).sort_by { |o| o['value'] }.map do |r|
+      results_with_relevance(query, options).sort_by { |o| -o['value'] }.map do |r|
         new(r['_id'].merge(relevance: r['value'])) do |o|
           # Need to match the actual object
           o.instance_variable_set('@new_record', false)
@@ -124,7 +124,7 @@ module Mongoid::Search
 
       reduce = %{
           function(key, values) {
-            return(values);
+            return Array.sum(values);
           }
       }
 
