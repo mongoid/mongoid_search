@@ -1,6 +1,12 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -19,6 +25,7 @@ jobs:
 
     name: test (ruby=${{ matrix.entry.ruby }}, mongo=${{ matrix.entry.mongo }}, mongoid=${{ matrix.entry.mongoid }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     continue-on-error: ${{ matrix.experimental }}
 
