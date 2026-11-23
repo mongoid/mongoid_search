@@ -23,7 +23,13 @@ AllCops:
   - ".rubocop.yml"
 
 Metrics/BlockLength:
+  inherit_mode:
+    merge:
+    - Exclude
   Enabled: false
+  Exclude:
+  - 'spec/release/release_spec.rb'
+  - 'Gemfile'
 
 Metrics/CyclomaticComplexity:
   Max: 20

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift lib unless $LOAD_PATH.include?(lib)
+require_relative 'lib/mongoid_search/version'
 
 Gem::Specification.new do |s|
   s.name = 'mongoid_search'
-  s.version = '0.6.0'
+  s.version = Mongoid::Search::VERSION
   s.authors = ['Mauricio Zaffari']
   s.email = ['mauricio@papodenerd.net']
   s.homepage = 'https://github.com/mongoid/mongoid_search'

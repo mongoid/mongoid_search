@@ -6,6 +6,7 @@
 * [#154](https://github.com/mongoid/mongoid_search/pull/154): Test through Ruby 4.0, Mongoid 9, and MongoDB 8.0 with representative legacy coverage and explicitly bundle OpenStruct - [@dblock](https://github.com/dblock).
 * [#157](https://github.com/mongoid/mongoid_search/pull/157): Lint Markdown, YAML, and spelling with rubocop-md, rubocop-prose, rubocop-spellcheck, and rubocop-yaml in a separate Lint workflow, and clean up documentation - [@dblock](https://github.com/dblock).
 * [#158](https://github.com/mongoid/mongoid_search/pull/158): Run CI pushes only on the default branch, cancel superseded pull request runs, skip duplicate lint in the test matrix, and bound job times - [@dblock](https://github.com/dblock).
+* [#159](https://github.com/mongoid/mongoid_search/pull/159): Release with ruby-gem-release from a manually dispatched GitHub Actions workflow using RubyGems Trusted Publishing, with dry runs - [@dblock](https://github.com/dblock).
 
 ## 0.5.0
 

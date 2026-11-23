@@ -1,65 +1,35 @@
-# Releasing Mongoid::Search
+# Releasing Mongoid Search
 
-There're no particular rules about when to release mongoid-search. Release bug fixes frequently, features not so frequently and breaking API changes rarely.
+Releases use [ruby-gem-release](https://github.com/dblock/ruby-gem-release) 0.9.0 through a manually dispatched [Release workflow](.github/workflows/release.yml). Keep the `ruby-gem-release` gem in [Gemfile](Gemfile) and the reusable workflow in `release.yml` pinned to the same version. The workflow publishes through RubyGems Trusted Publishing, so no RubyGems API key or one-time password is needed. It only runs from `master` in `mongoid/mongoid_search`. The local Bundler `rake release`, `release:rubygem_push`, and `release:source_control_push` tasks are disabled.
 
-## Release
+## One-Time Setup
 
-Run tests, check that all tests succeed locally.
+Before the first automated release, a maintainer must:
 
-```sh
-bundle install
-bundle exec rake
-```
+1. Create the GitHub environment `release` in `mongoid/mongoid_search`, for example with `gh api --method PUT repos/mongoid/mongoid_search/environments/release`, and restrict its deployment branches to `master`. Add required reviewers to require maintainer approval before publication.
+2. At [mongoid_search's trusted publishers](https://rubygems.org/gems/mongoid_search/trusted_publishers), add a GitHub Actions publisher with repository owner `mongoid`, repository `mongoid_search`, workflow filename `release.yml`, environment `release`, and the separate workflow repository owner `dblock` and repository `ruby-gem-release`.
+3. Allow GitHub Actions to push release commits and `v*` tags to `master`. See the upstream [setup and permissions guidance](https://github.com/dblock/ruby-gem-release/blob/v0.9.0/RELEASING.md#one-time-setup).
 
-Check that the last build succeeded in [GitHub Actions](https://github.com/mongoid/mongoid_search/actions) for all supported platforms.
-
-Change "Next Release" in [CHANGELOG.md](CHANGELOG.md) to the new version.
-
-```markdown
-### 0.6.0 (2026-02-02)
-```
-
-Remove the line with "Your contribution here.", since there will be no more contributions to this release.
-
-Commit your changes.
+Verify the setup without publishing with a [dry run](https://github.com/dblock/ruby-gem-release/blob/v0.9.0/docs/actions/release.md#dry-run), which never edits files, builds, pushes, or publishes:
 
 ```sh
-git add CHANGELOG.md
-git commit -m "Preparing for release, 0.6.0."
-git push origin master
+gh workflow run release.yml --repo mongoid/mongoid_search --ref master -f dry-run=true
 ```
 
-Release.
+## Prepare
+
+Start with a clean, up-to-date `master` and verify that the latest [CI checks](https://github.com/mongoid/mongoid_search/actions) pass. Follow semantic versioning: patch for fixes, minor for backward-compatible features, major for breaking changes. Check `VERSION` in [lib/mongoid_search/version.rb](lib/mongoid_search/version.rb) and the matching `(Next)` heading in [CHANGELOG.md](CHANGELOG.md), and change both in a pull request if needed, or pass a `version` override when dispatching. The workflow dates the `(Next)` heading using `YYYY/MM/DD` and removes the `* Your contribution here.` placeholder; a section without notes cannot be released.
+
+Release automation requires MRI Ruby 3.3 or newer; the release dependency and tasks are skipped on older Ruby versions and JRuby. Release specs in [spec/release](spec/release) run the actual release tasks against a local fixture with the [ruby-gem-release RSpec helpers](https://github.com/dblock/ruby-gem-release/blob/v0.9.0/docs/testing.md), without contacting RubyGems or GitHub.
+
+## Publish
 
 ```sh
-$ bundle exec rake release
-
-mongoid_search 0.6.0 built to pkg/mongoid_search-0.6.0.gem.
-Tagged v0.6.0.
-Pushed git commits and tags.
-Pushed mongoid_search 0.6.0 to rubygems.org.
+gh workflow run release.yml --repo mongoid/mongoid_search --ref master
 ```
 
-**Note:** You must have RubyGems credentials configured and push permissions for the `mongoid_search` gem. If you haven't authenticated yet, run `gem signin` first.
+Pass `-f version=x.y.z` to release a different version. Dispatching starts a real release; do not merge into `master` while it runs. The workflow prepares the release commit, starts MongoDB 8.0, runs lint and specs on Ruby 3.3, builds the gem, preserves recovery artifacts, publishes to RubyGems, pushes the release commit and `v` tag, and creates a GitHub Release with the changelog notes and the gem attached. It then increments the patch version, adds a new `(Next)` section, and pushes the next development commit. Verify the published version on [RubyGems](https://rubygems.org/gems/mongoid_search), the tag, the [GitHub Release](https://github.com/mongoid/mongoid_search/releases), and the next development commit.
 
-### Prepare for the Next Version
+## Recover a Partial Release
 
-Add the next release to [CHANGELOG.md](CHANGELOG.md).
-
-```markdown
-### 0.6.0 (Next)
-
-* Your contribution here.
-```
-
-Increment the minor version, modify [mongoid_search.gemspec](mongoid_search.gemspec).
-
-Commit your changes.
-
-```sh
-git add CHANGELOG.md mongoid_search.gemspec
-git commit -m "Preparing for next release, 0.6.0."
-git push origin master
-```
-
-Major version numbers are incremented with the first new feature.
+Inspect the failed run, RubyGems, remote commits and tags, and the GitHub Release before retrying. Publication may have succeeded even if a later step failed. Never move a published tag or republish a version with different contents. Use the run's retained recovery artifacts and the upstream [recovery instructions](https://github.com/dblock/ruby-gem-release/blob/v0.9.0/docs/actions/release.md#recovery-artifacts).
