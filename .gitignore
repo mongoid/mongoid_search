@@ -28,3 +28,4 @@ pkg
 
 ## PROJECT::SPECIFIC
 .bundle
+/vendor/bundle

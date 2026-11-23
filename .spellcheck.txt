@@ -6,6 +6,7 @@ aoquo
 ap
 appl
 awesom
+Bundler
 CaFé
 café
 chainable
@@ -36,6 +37,7 @@ iph
 ipho
 iphon
 iphone
+JRuby
 kílográm
 localizations
 md
@@ -43,6 +45,7 @@ mobil
 mongodb
 Mongoid
 mongoid
+MongoidSearchRelease
 motorola
 nitpicky
 oe
@@ -63,6 +66,7 @@ Rebase
 rebase
 reindex
 reindexing
+RSpec
 rtrv
 RuboCop
 rubocop
