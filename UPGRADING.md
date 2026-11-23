@@ -1,8 +1,8 @@
 # Upgrading
 
-## Upgrading to 0.6.0
+## Upgrading To 0.6.0
 
-### Relevance search returns highest-relevance results first
+### Relevance Search Returns Highest-Relevance Results First
 
 Searches with `relevant_search: true`, or with `Mongoid::Search.relevant_search = true`, now return results sorted by **decreasing numeric relevance**. Previously, results were sorted in ascending order, putting lower scores first; the map-reduce reducer could also return arrays instead of numeric scores. Relevance scores are now numeric counts of matching indexed keywords.
 

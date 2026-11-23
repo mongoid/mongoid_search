@@ -41,7 +41,7 @@ describe Mongoid::Search::Util do
     expect(Mongoid::Search::Util.normalize_keywords('Кафе')).to eq ['кафе']
   end
 
-  it 'should split whitespaces, hifens, dots, underlines, etc..' do
+  it 'should split whitespace, hyphens, dots, underscores, etc.' do
     expect(Mongoid::Search::Util.normalize_keywords("CaFé-express.com delicious;come visit, and 'win' an \"iPad\"")).to eq %w[cafe express com delicious come visit and win an ipad]
   end
 
