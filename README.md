@@ -2,8 +2,7 @@
 
 Mongoid Search is a simple full text search implementation for Mongoid ORM. It supports Mongoid 6, 7, and 8 and performs well for small data sets. If your searchable model is big (i.e. 1.000.000+ records), [mongoid_fulltext](https://github.com/mongoid/mongoid_fulltext), ElasticSearch, Solr or Sphinx may suit you better.
 
-[![Test](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml?query=branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid_search/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid_search?branch=master)
+[![Test](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid_search/actions/workflows/test.yml?query=branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid_search/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid_search?branch=master)
 
 CI collects SimpleCov coverage on Ruby 3.4 with Mongoid 9 and MongoDB 8.0 and submits one report to Coveralls using GitHub's workflow token. To generate a local report, run `COVERAGE=true MONGOID_VERSION=9 bundle install` followed by `COVERAGE=true MONGOID_VERSION=9 bundle exec rspec`. Reports are written to `coverage/`.
 
@@ -17,7 +16,7 @@ gem 'mongoid_search'
 
 Then:
 
-```
+```sh
 bundle install
 ```
 
@@ -27,6 +26,7 @@ bundle install
 class Product
   include Mongoid::Document
   include Mongoid::Search
+
   field :brand
   field :name
   field :unit
@@ -41,6 +41,7 @@ end
 
 class Tag
   include Mongoid::Document
+
   field :name
 
   belongs_to :product
@@ -48,6 +49,7 @@ end
 
 class Category
   include Mongoid::Document
+
   field :name
 
   has_many :products
@@ -57,7 +59,8 @@ end
 Now when you save a product, you get a `_keywords` field automatically:
 
 ```ruby
-p = Product.new brand: 'Apple', name: 'iPhone', unit: 'kilogram', info: { summary: 'Info-summary', description: 'Info-description' }
+p = Product.new brand: 'Apple', name: 'iPhone', unit: 'kilogram',
+                info: { summary: 'Info-summary', description: 'Info-description' }
 p.tags << Tag.new(name: 'Amazing')
 p.tags << Tag.new(name: 'Awesome')
 p.tags << Tag.new(name: 'Superb')
@@ -72,30 +75,31 @@ p._unit_keywords
 Now you can run search, which will look in the `_keywords` field and return all matching results:
 
 ```ruby
-Product.full_text_search("apple iphone").size
+Product.full_text_search('apple iphone').size
 # => 1
 ```
 
 You can also search in "virtual" fields by defining them as methods. This can be useful when you have a method with dynamic fields (i.e. variable schema).
+
 ```ruby
 class ModelWithDynamicFields
-  
-  ...
-  
+  # ...
+
   search_in :search_data
 
   def search_data
     # concatenate all String fields' values
-    self.attributes.select{|k,v| v.is_a?(String) }.values.join(' ')
+    attributes.select { |k, v| v.is_a?(String) }.values.join(' ')
   end
 end
 ```
+
 Mongoid_search will run the method before save and use it's output to populate the `_keywords` field.
 
 Of course, some models could have more than one index. For instance, two different searches with different fields, so you could even specify from which index should be searched:
 
 ```ruby
-Product.full_text_search("kilogram", index: :_unit_keywords).size
+Product.full_text_search('kilogram', index: :_unit_keywords).size
 # => 1
 ```
 
@@ -114,13 +118,13 @@ category.products.where(:price.lt => 499).full_text_search('iphone').asc(:price)
 
 To index or reindex all existing records, run this rake task
 
-```
-$ rake mongoid_search:index
+```sh
+rake mongoid_search:index
 ```
 
 ## Options
 
-### match
+### Match
 
 * `:any` - match any occurrence
 * `:all` - match all occurrences
@@ -135,7 +139,7 @@ Product.full_text_search('apple motorola', match: :all).size
 # => 0
 ```
 
-### allow\_empty\_search
+### Allow Empty Search
 
 * `true` - will return `Model.all`
 * `false` - will return `[]`
@@ -147,7 +151,7 @@ Product.full_text_search('', allow_empty_search: true).size
 # => 1
 ```
 
-### relevant_search
+### Relevant Search
 
 * `true` - adds relevance information to the results
 * `false` - no relevance information
@@ -165,7 +169,7 @@ Results are ordered by decreasing numeric relevance (the number of matching inde
 
 Upgrading from an earlier release? See [UPGRADING](UPGRADING.md) for the relevance ordering change in 0.6.0.
 
-### index
+### Index
 
 Default is `_keywords`.
 
@@ -216,18 +220,18 @@ Mongoid::Search.setup do |config|
   ## Regex to search
 
   ## Match partial words on both sides (slower)
-  config.regex = Proc.new { |query| /#{query}/ }
+  config.regex = proc { |query| /#{query}/ }
 
   ## Match partial words on the beginning or in the end (slightly faster)
   # config.regex = Proc.new { |query| /^#{query}/ }
   # config.regex = Proc.new { |query| /#{query}$/ }
 
   # Ligatures to be replaced
-  # http://en.wikipedia.org/wiki/Typographic_ligature
-  config.ligatures = { "œ"=>"oe", "æ"=>"ae" }
+  # https://en.wikipedia.org/wiki/Ligature_(writing)
+  config.ligatures = { 'œ' => 'oe', 'æ' => 'ae' }
 
   # Strip symbols regex to be replaced. These symbols will be replaced by space
-  config.strip_symbols = /[._:;'\"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
+  config.strip_symbols = %r{[._:;'"`,?|+={}()!@#%^&*<>~$\-\\/\[\]]}
 
   # Strip accents regex to be replaced. These sybols will be removed after strip_symbols replacing
   config.strip_accents = /[^\s\p{Alnum}]/

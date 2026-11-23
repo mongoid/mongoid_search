@@ -1,17 +1,147 @@
+plugins:
+- rubocop-md
+- rubocop-prose
+- rubocop-rake
+- rubocop-spellcheck
+- rubocop-yaml
+
+inherit_from: ".rubocop_todo.yml"
+
 AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
   Exclude:
-    - vendor/**/*
--Metrics/BlockLength:
+  - vendor/**/*
+  - coverage/**/*
+  - pkg/**/*
+  SuggestExtensions: false
+  inherit_mode:
+    merge:
+    - Include
+  Include:
+  - ".github/**/*.yml"
+  - ".rubocop.yml"
+
+Metrics/BlockLength:
   Enabled: false
+
 Metrics/CyclomaticComplexity:
   Max: 20
+
 Metrics/PerceivedComplexity:
   Max: 30
+
 Metrics/AbcSize:
   Max: 100
   Exclude:
-    - 'spec/**/*'
+  - "**/*.md"
+  inherit_mode:
+    merge:
+    - Exclude
 
-inherit_from: .rubocop_todo.yml
+YAML/Lint/InvalidSyntax:
+  Include:
+  - "**/*.yml"
+  - "**/*.yaml"
+
+YAML/Lint/DuplicateKey:
+  Include:
+  - "**/*.yml"
+  - "**/*.yaml"
+
+Naming/FileName:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+  - ".github/workflows/*.yml"
+
+Metrics/MethodLength:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Naming/HeredocDelimiterNaming:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Style/SafeNavigation:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Style/OneClassPerFile:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Style/Documentation:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Lint/UselessAssignment:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Style/MultilineBlockChain:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Style/SymbolProc:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Lint/Void:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - "**/*.md"
+
+Layout/LineLength:
+  inherit_mode:
+    merge:
+    - Exclude
+  Exclude:
+  - ".github/workflows/*.yml"
+
+Markdown/HeadingCapitalization:
+  Enabled: true
+  Style: title_case
+
+Prose/MaxLength:
+  Max: false
+  Exclude:
+  - LICENSE
+
+Spellcheck:
+  DictionaryFiles:
+    en:
+    - gem:rubocop-spellcheck/data/en/en.dic
+    - ".spellcheck.txt"
+
+Spellcheck/Spelling:
+  Exclude:
+  - LICENSE
