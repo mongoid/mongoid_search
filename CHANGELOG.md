@@ -1,3 +1,7 @@
+## 0.6.1 (Next)
+
+* Your contribution here.
+
 ## 0.6.0 (2026/11/24)
 
 * [#156](https://github.com/mongoid/mongoid_search/pull/156): Cover relevance search, configuration, output and Rails indexing tasks; fix scalar relevance scores and highest-relevance-first ordering (see [UPGRADING](UPGRADING.md)) - [@dblock](https://github.com/dblock).
